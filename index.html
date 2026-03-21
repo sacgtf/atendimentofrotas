@@ -281,7 +281,7 @@ tbody td.tdl{min-width:260px;max-width:400px;font-size:12px;color:var(--tx2);whi
     <span class="slbl" style="color:#22d3ee">📞 Script de solicitação</span>
     <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border-left:3px solid #22d3ee">
       <div style="font-size:14px;color:var(--tx);line-height:1.9">
-        <em style="color:var(--tx2)">"Senhor(a), para acionar o reboque precisamos da sua localização. Acesse pelo celular: <strong style="color:#22d3ee">bit.ly/locfrotas</strong> e clique no botão laranja <strong style="color:#22d3ee">"Compartilhar minha localização"</strong>, talvez o site peça permissão para acessar sua localização, clique em permitir."</em>
+        <em style="color:var(--tx2)">"Senhor(a), para acionar o reboque precisamos da sua localização. Acesse pelo celular: <strong style="color:#22d3ee">bit.ly/frotasloc</strong> e clique no botão laranja <strong style="color:#22d3ee">"Compartilhar minha localização"</strong>, talvez o site peça permissão para acessar sua localização, clique em permitir."</em>
       </div>
     </div>
   </div>
@@ -1869,13 +1869,8 @@ async function locAtualizar(){
     try { fotos = await respFotos.json(); } catch(e){ fotos=[]; }
     if(!Array.isArray(fotos)) fotos = [];
 
-    // Filtra fotos das últimas 2 horas
-    fotos = fotos.filter(function(f){
-      var ts = f.created_at ? new Date(f.created_at).getTime() : 0;
-      return (Date.now() - ts) < 7200000;
-    });
-
-    var totalItens = locs.length + (fotos.length ? 1 : 0);
+    // Filtra apenas arquivos válidos (ignora pastas/itens sem name)
+    fotos = fotos.filter(function(f){ return f && f.name && f.name !== '.emptyFolderPlaceholder'; });
     if(count) count.textContent = locs.length;
     if(status) status.textContent = 'Atualizado às '+new Date().toLocaleTimeString('pt-BR');
 
@@ -1915,7 +1910,7 @@ async function locAtualizar(){
       h += '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px">';
       fotos.forEach(function(f){
         var url = SUPA_URL+'/storage/v1/object/public/fotos-condutor/'+f.name;
-        var isNova = f.created_at && (Date.now() - new Date(f.created_at).getTime()) < 60000;
+        var isNova = f.created_at && (Date.now() - new Date(f.created_at).getTime()) < 300000;
         h += '<div style="position:relative">';
         if(isNova) h += '<span style="position:absolute;top:-6px;left:-6px;background:#6366f1;color:#fff;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;z-index:1">NOVA</span>';
         h += '<a href="'+url+'" target="_blank">';
