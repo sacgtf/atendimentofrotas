@@ -1860,7 +1860,7 @@ async function locAtualizar(){
       fetch(SUPA_URL+'/storage/v1/object/list/fotos-condutor', {
         method:'POST',
         headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY, 'Content-Type':'application/json' },
-        body: JSON.stringify({ limit:200, offset:0, sortBy:{ column:'created_at', order:'desc' } })
+        body: JSON.stringify({ prefix:'', limit:200, offset:0, sortBy:{ column:'created_at', order:'desc' } })
       })
     ]);
 
@@ -1944,7 +1944,7 @@ async function fotosApagarTodas(){
   var r = await fetch(SUPA_URL+'/storage/v1/object/list/fotos-condutor', {
     method:'POST',
     headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY, 'Content-Type':'application/json' },
-    body: JSON.stringify({ limit:200, offset:0 })
+    body: JSON.stringify({ prefix:'', limit:200, offset:0 })
   });
   var files = await r.json();
   if(!Array.isArray(files)||!files.length){ locAtualizar(); return; }
