@@ -824,9 +824,15 @@ var _lastLoad = null;
 var _refreshTimer = null;
 
 
+
 // ── LOGIN ─────────────────────────────────────────────────────────────────
-var _AUTH = { users: [] };
 var _logado = false;
+var _usuarios = []; // carregados da planilha antes do login
+
+// Carrega usuários da planilha antes de exibir o login
+fetchAba(ABAS.usuarios).then(function(rows){
+  _usuarios = rows;
+}).catch(function(){ _usuarios = []; });
 
 document.addEventListener('keydown', function(e){
   if(e.key === 'Enter' && !_logado) fazerLogin();
@@ -835,23 +841,34 @@ document.addEventListener('keydown', function(e){
 function fazerLogin(){
   var u = document.getElementById('login-user').value.trim().toLowerCase();
   var p = document.getElementById('login-pass').value.trim();
-  var ok = _AUTH.users.some(function(row){
-    var usr = (row.usuario||row.Usuario||row.USUARIO||'').trim().toLowerCase();
-    var pwd = (row.senha||row.Senha||row.SENHA||'').trim();
-    return usr === u && pwd === p;
+  var err = document.getElementById('login-err');
+
+  if(!_usuarios.length){
+    err.textContent = 'Aguarde, carregando dados de acesso...';
+    err.style.display = 'block';
+    setTimeout(function(){ err.style.display = 'none'; err.textContent = 'Usuário ou senha incorretos'; }, 2000);
+    return;
+  }
+
+  var encontrado = _usuarios.find(function(r){
+    var usr = (r['usuario'] || r['Usuario'] || r['USUARIO'] || '').trim().toLowerCase();
+    var sen = (r['senha']   || r['Senha']   || r['SENHA']   || '').trim();
+    return usr === u && sen === p;
   });
-  if(ok){
+
+  if(encontrado){
     _logado = true;
     document.getElementById('login-screen').style.display = 'none';
     carregarTodos(false);
   } else {
-    var err = document.getElementById('login-err');
+    err.textContent = 'Usuário ou senha incorretos';
     err.style.display = 'block';
     document.getElementById('login-pass').value = '';
     document.getElementById('login-pass').focus();
     setTimeout(function(){ err.style.display = 'none'; }, 3000);
   }
 }
+
 
 function carregarTodos(silencioso) {
   var keys  = Object.keys(ABAS);
@@ -865,7 +882,6 @@ function carregarTodos(silencioso) {
   }
 
   var promises = keys.map(function(key) {
-    if(key === 'usuarios') return Promise.resolve();
     return fetchAba(ABAS[key])
       .then(function(rows) {
         if      (key === 'regionais')       GTF.regionais       = processarRegionais(rows);
@@ -951,17 +967,8 @@ document.addEventListener('visibilitychange', function() {
 });
 
 window.addEventListener('DOMContentLoaded', function() {
-  // Carrega lista de usuários da planilha antes de exibir o login
-  fetchAba('usuarios')
-    .then(function(rows){
-      _AUTH.users = rows || [];
-    })
-    .catch(function(){
-      _AUTH.users = [];
-    })
-    .finally(function(){
-      document.getElementById('login-user').focus();
-    });
+  // Aguarda login — carregarTodos só é chamado após autenticação
+  document.getElementById('login-user').focus();
 });
 
 
@@ -1844,29 +1851,51 @@ async function locAtualizar(){
 
   try {
     var desde = Date.now() - 7200000;
-    var resp = await fetch(SUPA_URL+'/rest/v1/localizacoes?ts=gte.'+desde+'&order=ts.desc', {
-      headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY }
+
+    // Busca localizações e fotos em paralelo
+    var [respLoc, respFotos] = await Promise.all([
+      fetch(SUPA_URL+'/rest/v1/localizacoes?ts=gte.'+desde+'&order=ts.desc', {
+        headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY }
+      }),
+      fetch(SUPA_URL+'/storage/v1/object/list/fotos-condutor', {
+        method:'POST',
+        headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY, 'Content-Type':'application/json' },
+        body: JSON.stringify({ limit:200, offset:0, sortBy:{ column:'created_at', order:'desc' } })
+      })
+    ]);
+
+    var locs  = await respLoc.json();
+    var fotos = [];
+    try { fotos = await respFotos.json(); } catch(e){ fotos=[]; }
+    if(!Array.isArray(fotos)) fotos = [];
+
+    // Filtra fotos das últimas 2 horas
+    fotos = fotos.filter(function(f){
+      var ts = f.created_at ? new Date(f.created_at).getTime() : 0;
+      return (Date.now() - ts) < 7200000;
     });
-    var locs = await resp.json();
+
+    var totalItens = locs.length + (fotos.length ? 1 : 0);
     if(count) count.textContent = locs.length;
     if(status) status.textContent = 'Atualizado às '+new Date().toLocaleTimeString('pt-BR');
 
-    if(!locs.length){
-      lista.innerHTML = '<div class="ecrd"><div class="eico">📍</div><div class="etitle">Aguardando localizações</div><div class="esub">Quando o condutor acessar o link e compartilhar, aparece aqui automaticamente</div></div>';
+    if(!locs.length && !fotos.length){
+      lista.innerHTML = '<div class="ecrd"><div class="eico">📍</div><div class="etitle">Aguardando localizações ou fotos</div><div class="esub">Quando o condutor compartilhar, aparece aqui automaticamente</div></div>';
       return;
     }
 
     var h = '';
+
+    // ── Localizações ──
     locs.forEach(function(loc){
-      var hora     = new Date(loc.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
-      var gmaps    = 'https://www.google.com/maps?q='+loc.lat+','+loc.lng;
-      var gmapsNav = 'https://www.google.com/maps/dir/?api=1&destination='+loc.lat+','+loc.lng;
-      var isNovo   = (Date.now() - loc.ts) < 60000;
+      var hora   = new Date(loc.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      var gmaps  = 'https://www.google.com/maps?q='+loc.lat+','+loc.lng;
+      var isNovo = (Date.now() - loc.ts) < 60000;
       h += '<div class="rcard" style="border-left-color:#22d3ee;'+(isNovo?'background:rgba(34,211,238,.06)':'')+';">';
       h += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">';
       h += '<div>';
       if(isNovo) h += '<span style="background:#22d3ee;color:#1e2535;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px;display:inline-block">🔴 NOVO</span><br>';
-      h += '<div class="flbl">Recebido às</div><div class="fval big" style="color:#22d3ee;font-family:monospace">'+hora+'</div>';
+      h += '<div class="flbl">📍 Localização recebida às</div><div class="fval big" style="color:#22d3ee;font-family:monospace">'+hora+'</div>';
       if(loc.endereco){ h += '<div class="flbl" style="margin-top:8px">Endereço aproximado</div><div class="fval">'+E(loc.endereco)+'</div>'; }
       h += '<div class="flbl" style="margin-top:8px">Coordenadas</div>';
       h += '<div class="fval" style="font-size:13px;font-family:monospace;color:var(--tx2)">'+loc.lat.toFixed(6)+', '+loc.lng.toFixed(6)+'</div>';
@@ -1874,15 +1903,63 @@ async function locAtualizar(){
       h += '</div>';
       h += '<div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0">';
       h += '<a href="'+gmaps+'" target="_blank" style="background:#22d3ee;color:#1e2535;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block;white-space:nowrap">🗺️ Ver no Maps</a>';
-
       h += '<button onclick="locCopiarCoords(\''+loc.lat+','+loc.lng+'\')" style="background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">📋 Copiar coords</button>';
       h += '<button onclick="locApagar('+loc.id+')" style="background:transparent;border:1px solid rgba(248,113,113,.4);color:#f87171;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">🗑️ Apagar</button>';
       h += '</div></div></div>';
     });
+
+    // ── Fotos ──
+    if(fotos.length){
+      h += '<div class="rcard" style="border-left-color:#6366f1;">';
+      h += '<div class="flbl" style="color:#a5b4fc;margin-bottom:12px">📷 Fotos recebidas <span style="background:rgba(99,102,241,.15);color:#a5b4fc;border-radius:5px;padding:2px 8px;font-size:11px;margin-left:6px">'+fotos.length+'</span></div>';
+      h += '<div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:12px">';
+      fotos.forEach(function(f){
+        var url = SUPA_URL+'/storage/v1/object/public/fotos-condutor/'+f.name;
+        var isNova = f.created_at && (Date.now() - new Date(f.created_at).getTime()) < 60000;
+        h += '<div style="position:relative">';
+        if(isNova) h += '<span style="position:absolute;top:-6px;left:-6px;background:#6366f1;color:#fff;border-radius:4px;padding:1px 5px;font-size:9px;font-weight:700;z-index:1">NOVA</span>';
+        h += '<a href="'+url+'" target="_blank">';
+        h += '<img src="'+url+'" style="width:90px;height:90px;object-fit:cover;border-radius:8px;border:2px solid rgba(99,102,241,.3);cursor:pointer;transition:.15s" onmouseover="this.style.borderColor=\'#6366f1\'" onmouseout="this.style.borderColor=\'rgba(99,102,241,.3)\'">';
+        h += '</a>';
+        h += '<button onclick="fotosApagarUma(\''+f.name+'\')" style="position:absolute;top:2px;right:2px;background:rgba(0,0,0,.7);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:10px;cursor:pointer;font-weight:700;display:flex;align-items:center;justify-content:center">✕</button>';
+        h += '</div>';
+      });
+      h += '</div>';
+      h += '<button onclick="fotosApagarTodas()" style="background:transparent;border:1px solid rgba(248,113,113,.4);color:#f87171;border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">🗑️ Apagar todas as fotos</button>';
+      h += '</div>';
+    }
+
     lista.innerHTML = h;
   } catch(e){
-    if(status) status.textContent = '⚠️ Erro ao buscar localizações';
+    if(status) status.textContent = '⚠️ Erro ao buscar dados';
   }
+}
+
+async function fotosApagarUma(nome){
+  await fetch(SUPA_URL+'/storage/v1/object/fotos-condutor/'+nome, {
+    method:'DELETE',
+    headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY }
+  });
+  locAtualizar();
+}
+
+async function fotosApagarTodas(){
+  if(!confirm('Apagar todas as fotos recebidas?')) return;
+  // Lista e apaga todas
+  var r = await fetch(SUPA_URL+'/storage/v1/object/list/fotos-condutor', {
+    method:'POST',
+    headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY, 'Content-Type':'application/json' },
+    body: JSON.stringify({ limit:200, offset:0 })
+  });
+  var files = await r.json();
+  if(!Array.isArray(files)||!files.length){ locAtualizar(); return; }
+  var nomes = files.map(function(f){ return f.name; });
+  await fetch(SUPA_URL+'/storage/v1/object/fotos-condutor', {
+    method:'DELETE',
+    headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY, 'Content-Type':'application/json' },
+    body: JSON.stringify({ prefixes: nomes })
+  });
+  locAtualizar();
 }
 
 function locCopiarCoords(coords){
