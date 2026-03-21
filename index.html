@@ -281,7 +281,7 @@ tbody td.tdl{min-width:260px;max-width:400px;font-size:12px;color:var(--tx2);whi
     <span class="slbl" style="color:#22d3ee">📞 Script de solicitação</span>
     <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border-left:3px solid #22d3ee">
       <div style="font-size:14px;color:var(--tx);line-height:1.9">
-        <em style="color:var(--tx2)">"Senhor(a), para acionar o reboque precisamos da sua localização. Acesse pelo celular: <strong style="color:#22d3ee">bit.ly/locfrotas</strong> e clique no botão laranja <strong style="color:#22d3ee">"Compartilhar minha localização"</strong>, talvez o site peça permissão para acessar sua localização, clique em permitir."</em>
+        <em style="color:var(--tx2)">"Senhor(a), para acionar o reboque precisamos da sua localização. Acesse pelo celular: <strong style="color:#22d3ee">bit.ly/frotasloc</strong> e clique no botão laranja <strong style="color:#22d3ee">"Compartilhar minha localização"</strong>, talvez o site peça permissão para acessar sua localização, clique em permitir."</em>
       </div>
     </div>
   </div>
@@ -727,7 +727,8 @@ var ABAS = {
   servicos_pit:    'Serviços Pit Stop',
   link_pool:       'Link Pool',
   reserva_and:     'Reserva em andamento',
-  controlador:     'Controlador'
+  controlador:     'Controlador',
+  usuarios:        'usuarios'
 };
 
 var GTF = {};
@@ -824,7 +825,7 @@ var _refreshTimer = null;
 
 
 // ── LOGIN ─────────────────────────────────────────────────────────────────
-var _AUTH = { user: 'frotas.movida', pass: 'movida@2026' };
+var _AUTH = { users: [] };
 var _logado = false;
 
 document.addEventListener('keydown', function(e){
@@ -832,9 +833,14 @@ document.addEventListener('keydown', function(e){
 });
 
 function fazerLogin(){
-  var u = document.getElementById('login-user').value.trim();
+  var u = document.getElementById('login-user').value.trim().toLowerCase();
   var p = document.getElementById('login-pass').value.trim();
-  if(u === _AUTH.user && p === _AUTH.pass){
+  var ok = _AUTH.users.some(function(row){
+    var usr = (row.usuario||row.Usuario||row.USUARIO||'').trim().toLowerCase();
+    var pwd = (row.senha||row.Senha||row.SENHA||'').trim();
+    return usr === u && pwd === p;
+  });
+  if(ok){
     _logado = true;
     document.getElementById('login-screen').style.display = 'none';
     carregarTodos(false);
@@ -859,6 +865,7 @@ function carregarTodos(silencioso) {
   }
 
   var promises = keys.map(function(key) {
+    if(key === 'usuarios') return Promise.resolve();
     return fetchAba(ABAS[key])
       .then(function(rows) {
         if      (key === 'regionais')       GTF.regionais       = processarRegionais(rows);
@@ -944,8 +951,17 @@ document.addEventListener('visibilitychange', function() {
 });
 
 window.addEventListener('DOMContentLoaded', function() {
-  // Aguarda login — carregarTodos só é chamado após autenticação
-  document.getElementById('login-user').focus();
+  // Carrega lista de usuários da planilha antes de exibir o login
+  fetchAba('usuarios')
+    .then(function(rows){
+      _AUTH.users = rows || [];
+    })
+    .catch(function(){
+      _AUTH.users = [];
+    })
+    .finally(function(){
+      document.getElementById('login-user').focus();
+    });
 });
 
 
