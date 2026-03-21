@@ -269,19 +269,43 @@ async function enviarFotos(){
 
   for(var i=0;i<_fotosFiles.length;i++){
     var file = _fotosFiles[i];
-    var ext  = file.name.split('.').pop() || 'jpg';
-    var nome = 'foto_'+Date.now()+'_'+i+'.'+ext;
+    var ext  = (file.name.split('.').pop() || 'jpg').toLowerCase();
+    var nome = 'foto_'+Date.now()+'_'+Math.random().toString(36).substr(2,6)+'.'+ext;
     progT.textContent = 'Enviando foto '+(i+1)+' de '+total+'...';
+
+    // Garante Content-Type correto independente do celular
+    var contentType = file.type;
+    if(!contentType || contentType === '') {
+      if(ext==='jpg'||ext==='jpeg') contentType = 'image/jpeg';
+      else if(ext==='png') contentType = 'image/png';
+      else if(ext==='gif') contentType = 'image/gif';
+      else if(ext==='webp') contentType = 'image/webp';
+      else if(ext==='heic') contentType = 'image/heic';
+      else contentType = 'image/jpeg';
+    }
 
     try{
       var r = await fetch(SUPA_URL+'/storage/v1/object/fotos-condutor/'+nome,{
         method:'POST',
-        headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':file.type,'x-upsert':'true'},
+        headers:{
+          'apikey': SUPA_KEY,
+          'Authorization': 'Bearer '+SUPA_KEY,
+          'Content-Type': contentType,
+          'x-upsert': 'true'
+        },
         body: file
       });
-      if(r.ok||r.status===200||r.status===201){ enviados++; }
-      else { erros++; }
-    } catch(e){ erros++; }
+      if(r.ok||r.status===200||r.status===201){
+        enviados++;
+      } else {
+        var errBody = await r.text();
+        console.error('Erro upload foto:', r.status, errBody);
+        erros++;
+      }
+    } catch(e){
+      console.error('Exceção upload foto:', e);
+      erros++;
+    }
 
     progF.style.width = Math.round(((i+1)/total)*100)+'%';
   }
