@@ -1,0 +1,1992 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Atendimento ao Condutor – GTF Movida</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --or:#FF6600;--ord:#cc5200;--orl:#e05500;
+  --orf:rgba(255,102,0,.12);--orf2:rgba(255,102,0,.06);
+  --bg:#1e2535;--bg2:#252e40;--bg3:#2e3a52;--bg4:#35445f;
+  --bdr:rgba(255,255,255,.13);--bdr2:rgba(255,255,255,.08);
+  --tx:#edf0f5;--tx2:#a8b4c8;--tx3:#7080a0;
+}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:15px}
+
+/* HEADER */
+.hdr{background:var(--bg2);border-bottom:2px solid var(--or);padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.logo{background:var(--or);border-radius:8px;padding:5px 12px;font-size:17px;font-weight:800;color:#fff;letter-spacing:-.5px;cursor:pointer;white-space:nowrap}
+.logo span{display:inline-block;width:5px;height:5px;background:#fff;border-radius:50%;margin:0 0 2px 1px;vertical-align:middle}
+.hdr-center{font-size:13px;font-weight:600;color:var(--tx2);text-align:center;flex:1;padding:0 12px}
+.btn-home{background:var(--or);color:#fff;border:none;border-radius:8px;padding:7px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:none;align-items:center;gap:6px;transition:background .15s;white-space:nowrap}
+.btn-home:hover{background:var(--ord)}
+
+/* PAGES */
+.page{max-width:1060px;margin:0 auto;padding:36px 24px;display:none}
+.page.active{display:block}
+
+/* MENU */
+.menu-hero{margin-bottom:28px}
+.menu-hero h1{font-size:27px;font-weight:800;color:var(--tx);letter-spacing:-.3px;margin-bottom:5px}
+.menu-hero h1 em{color:var(--or);font-style:normal}
+.menu-hero p{color:var(--tx2);font-size:14px}
+.menu-bar{width:44px;height:2px;background:var(--or);border-radius:2px;margin:12px 0 24px}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin:0 0 10px}
+.sec-lbl+.sec-lbl{margin-top:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:10px;margin-bottom:8px}
+.mcard{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:15px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:12px;position:relative;overflow:hidden}
+.mcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--or);opacity:0;transition:.18s;border-radius:3px 0 0 3px}
+.mcard:hover{background:var(--bg3);border-color:rgba(255,102,0,.35);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.mcard:hover::before{opacity:1}
+.mcard:hover .mcard-arr{color:var(--or);transform:translateX(2px)}
+.mcard-ico{width:40px;height:40px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;background:var(--orf);border:1px solid rgba(255,102,0,.2)}
+.mcard-ico.tbl{background:rgba(99,102,241,.12);border-color:rgba(99,102,241,.25)}
+.mcard-title{font-size:14px;font-weight:700;color:var(--tx)}
+.mcard-sub{font-size:12px;color:var(--tx3);margin-top:2px}
+.mcard-arr{color:var(--tx3);font-size:16px;margin-left:auto;flex-shrink:0;transition:.18s}
+.badge-tbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;background:rgba(99,102,241,.15);color:#a5b4fc;border:1px solid rgba(99,102,241,.25);border-radius:4px;padding:2px 6px;display:inline-block;margin-top:4px}
+
+/* MODULE */
+.mod-hdr{display:flex;align-items:center;gap:12px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--bdr)}
+.mod-ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--orf);border:1px solid rgba(255,102,0,.22)}
+.mod-title{font-size:20px;font-weight:800;color:var(--tx)}
+.mod-sub{font-size:13px;color:var(--tx3);margin-top:2px}
+
+/* SEARCH */
+.sbox{background:var(--bg2);border:1px solid var(--bdr);border-radius:12px;padding:18px;margin-bottom:20px}
+.slbl{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.9px;display:block;margin-bottom:10px}
+.srow{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.sinp,.ssel{flex:1;min-width:150px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px;color:var(--tx);font-size:15px;padding:10px 14px;outline:none;transition:.18s;font-family:inherit}
+.sinp:focus,.ssel:focus{border-color:var(--or);background:rgba(255,102,0,.05);box-shadow:0 0 0 3px rgba(255,102,0,.12)}
+.sinp::placeholder{color:var(--tx3)}
+.ssel option{background:var(--bg3);color:var(--tx)}
+.btn-srch{background:var(--or);color:#fff;border:none;border-radius:9px;padding:11px 24px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.18s;white-space:nowrap}
+.btn-srch:hover{background:var(--ord);box-shadow:0 4px 16px rgba(255,102,0,.4)}
+.shint{font-size:12px;color:var(--tx3)}
+.shint strong{color:var(--tx2)}
+
+/* AUTOCOMPLETE */
+.ac-wrap{position:relative;flex:1;min-width:150px}
+.ac-wrap .sinp{width:100%}
+.ac-list{position:absolute;top:100%;left:0;right:0;background:var(--bg3);border:1.5px solid var(--or);border-radius:0 0 9px 9px;max-height:200px;overflow-y:auto;z-index:300;display:none;margin-top:-2px}
+.ac-list.open{display:block}
+.ac-item{padding:10px 14px;font-size:14px;color:var(--tx);cursor:pointer;border-bottom:1px solid var(--bdr2);transition:background .12s}
+.ac-item:last-child{border-bottom:none}
+.ac-item:hover{background:var(--orf);color:var(--orl)}
+.ac-item mark{background:rgba(255,102,0,.35);color:var(--orl);border-radius:2px;padding:0 1px}
+
+/* RESULTS */
+.rmeta{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:6px}
+.rcnt{font-size:13px;color:var(--tx2)}
+.rq strong{color:var(--or);font-size:12px}
+.rcard{background:var(--bg2);border:1px solid var(--bdr);border-left:3px solid transparent;border-radius:11px;padding:17px 19px;margin-bottom:10px;transition:.18s;animation:fi .22s ease}
+.rcard:hover{background:var(--bg3);border-left-color:var(--or);transform:translateX(2px)}
+.rgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:12px 18px}
+.flbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--tx3);margin-bottom:3px}
+.fval{font-size:15px;color:var(--tx);font-weight:500;word-break:break-word;line-height:1.5}
+.fval.big{font-size:16px;font-weight:700}
+.bplaca{display:inline-block;background:rgba(255,102,0,.13);color:var(--orl);border:1px solid rgba(255,102,0,.28);border-radius:5px;padding:1px 9px;font-size:12px;font-weight:700;font-family:monospace;letter-spacing:1.4px}
+.tblock{background:var(--bg3);border:1px solid var(--bdr2);border-left:3px solid var(--or);border-radius:7px;padding:13px;font-size:14px;color:var(--tx2);line-height:1.7;margin-top:4px;white-space:pre-wrap;word-break:break-word}
+.dvr{height:1px;background:var(--bdr2);margin:12px 0}
+.grp-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--or);margin-bottom:9px}
+.tel-a{color:#38bdf8;text-decoration:none}
+.tel-a:hover{text-decoration:underline}
+.placas-list{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+mark{background:rgba(255,102,0,.28);color:var(--orl);border-radius:2px;padding:0 1px}
+
+/* IDLE / EMPTY */
+.idle{text-align:center;padding:52px 0;color:var(--tx3)}
+.idle-ico{font-size:38px;margin-bottom:10px;opacity:.5}
+.ecrd{background:var(--bg2);border:1px solid var(--bdr);border-radius:11px;padding:44px;text-align:center}
+.eico{font-size:38px;margin-bottom:8px}
+.etitle{font-size:14px;font-weight:600;color:var(--tx2);margin-bottom:4px}
+.esub{font-size:12px;color:var(--tx3)}
+
+/* ACCORDION */
+.acc-item{background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;margin-bottom:8px;overflow:hidden;animation:fi .22s ease}
+.acc-hdr{padding:14px 16px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;transition:background .15s}
+.acc-hdr:hover{background:var(--bg3)}
+.acc-hdr-txt{font-size:14px;font-weight:600;color:var(--tx);line-height:1.4}
+.acc-arrow{color:var(--or);font-size:16px;flex-shrink:0;transition:transform .2s}
+.acc-body{display:none;padding:0 16px 14px;font-size:14px;color:var(--tx2);line-height:1.7;white-space:pre-wrap;border-top:1px solid var(--bdr2)}
+.acc-item.open .acc-body{display:block}
+.acc-item.open .acc-arrow{transform:rotate(90deg)}
+
+/* VEÍCULO RESERVA */
+.vr-grupo{margin-bottom:28px}
+.vr-grupo-titulo{font-size:12px;font-weight:800;color:var(--or);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;padding-bottom:8px;border-bottom:2px solid var(--or)}
+.vr-step{display:flex;gap:14px;background:var(--bg2);border:1px solid var(--bdr);border-radius:10px;padding:13px 15px;margin-bottom:8px}
+.vr-num{width:28px;height:28px;border-radius:50%;background:var(--or);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.vr-passo{font-size:14px;font-weight:700;color:var(--tx);margin-bottom:5px}
+.vr-orient{font-size:13px;color:var(--tx2);line-height:1.65;white-space:pre-wrap;word-break:break-word}
+
+/* TABELA */
+.tbl-filter-bar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tbl-finp{flex:1;min-width:200px;background:var(--bg3);border:1.5px solid var(--bdr);border-radius:9px;color:var(--tx);font-size:14px;padding:10px 14px;outline:none;transition:.18s;font-family:inherit}
+.tbl-finp:focus{border-color:var(--or);background:rgba(255,102,0,.05);box-shadow:0 0 0 3px rgba(255,102,0,.12)}
+.tbl-finp::placeholder{color:var(--tx3)}
+.tbl-cnt{font-size:12px;color:var(--tx3);margin-bottom:8px}
+.tbl-wrap{overflow-x:auto;border-radius:11px;border:1px solid var(--bdr)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+thead tr{background:var(--bg3);border-bottom:2px solid var(--or)}
+thead th{padding:12px 15px;text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.9px;color:var(--tx3);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--bdr2);transition:background .12s}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:var(--bg3)}
+tbody tr.hr{display:none}
+tbody td{padding:13px 15px;color:var(--tx);vertical-align:top;line-height:1.6;word-break:break-word}
+tbody td.tdl{min-width:260px;max-width:400px;font-size:12px;color:var(--tx2);white-space:pre-wrap}
+
+@keyframes fi{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.ptab{background:var(--bg2);border:1px solid var(--bdr);color:var(--tx2);border-radius:9px;padding:10px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s}
+.ptab:hover{border-color:var(--or);color:var(--or)}
+.ptab-active{background:var(--or);color:#fff;border-color:var(--or)}
+.ptab-active:hover{background:var(--ord);color:#fff}
+.pit-uf-btn{background:var(--bg2);border:1.5px solid var(--bdr);color:var(--tx2);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:all .15s}
+.pit-uf-btn:hover,.pit-uf-btn.active{background:var(--or);color:#fff;border-color:var(--or)}
+.pit-cidade-btn{background:var(--bg3);border:1px solid var(--bdr);color:var(--tx);border-radius:8px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s}
+.pit-cidade-btn:hover,.pit-cidade-btn.active{background:var(--or);color:#fff;border-color:var(--or)}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:#1e2535;z-index:99999;display:flex;align-items:center;justify-content:center}
+.login-box{background:#252e40;border:1px solid rgba(255,102,0,.25);border-radius:16px;padding:40px 36px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+.login-logo{background:#FF6600;border-radius:9px;padding:6px 14px;font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px;display:inline-block;margin-bottom:24px}
+.login-logo span{display:inline-block;width:5px;height:5px;background:#fff;border-radius:50%;margin:0 0 2px 1px;vertical-align:middle}
+.login-title{font-size:18px;font-weight:700;color:#edf0f5;margin-bottom:6px}
+.login-sub{font-size:13px;color:#7080a0;margin-bottom:28px}
+.login-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:#7080a0;display:block;margin-bottom:7px}
+.login-inp{width:100%;background:#1e2535;border:1.5px solid rgba(255,255,255,.1);border-radius:9px;color:#edf0f5;font-size:15px;padding:11px 14px;outline:none;font-family:inherit;transition:.18s;margin-bottom:16px}
+.login-inp:focus{border-color:#FF6600;background:rgba(255,102,0,.05);box-shadow:0 0 0 3px rgba(255,102,0,.12)}
+.login-btn{width:100%;background:#FF6600;color:#fff;border:none;border-radius:9px;padding:13px;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;transition:.18s;margin-top:4px}
+.login-btn:hover{background:#cc5200}
+.login-err{color:#f87171;font-size:13px;text-align:center;margin-top:12px;display:none}
+
+@media(max-width:600px){
+  .hdr{padding:0 12px}.hdr-center{font-size:10px}
+  .page{padding:20px 12px}.grid{grid-template-columns:1fr}
+  .srow{flex-direction:column}.btn-srch{width:100%}
+}
+</style>
+</head>
+<body>
+
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">movida<span></span></div>
+    <div class="login-title">Atendimento ao Condutor</div>
+    <div class="login-sub">GTF Movida — Acesso restrito</div>
+    <label class="login-label">Usuário</label>
+    <input class="login-inp" id="login-user" type="text" placeholder="Digite seu usuário" autocomplete="off"/>
+    <label class="login-label">Senha</label>
+    <input class="login-inp" id="login-pass" type="password" placeholder="Digite sua senha"/>
+    <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+    <div class="login-err" id="login-err">Usuário ou senha incorretos</div>
+  </div>
+</div>
+
+<div id="loading-overlay" style="position:fixed;inset:0;background:rgba(30,37,53,0.97);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px">
+  <div style="background:#FF6600;border-radius:10px;padding:8px 18px;font-size:20px;font-weight:800;color:#fff;letter-spacing:-.5px">movida<span style="display:inline-block;width:5px;height:5px;background:#fff;border-radius:50%;margin:0 0 2px 1px;vertical-align:middle"></span></div>
+  <div style="font-size:16px;font-weight:600;color:#edf0f5">Atendimento ao Condutor – GTF</div>
+  <div style="width:48px;height:48px;border:4px solid rgba(255,102,0,.25);border-top-color:#FF6600;border-radius:50%;animation:spin 0.8s linear infinite"></div>
+  <div id="loading-msg" style="font-size:14px;color:#a8b4c8">Carregando dados...</div>
+  <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</div>
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:#1e2535;border:1px solid rgba(255,102,0,.4);color:#edf0f5;border-radius:10px;padding:12px 20px;font-size:14px;font-weight:600;z-index:9998;opacity:0;transform:translateY(20px);transition:all .3s ease;pointer-events:none">
+  ✓ Dados atualizados
+</div>
+
+<div class="hdr">
+  <div class="logo" onclick="showPage('menu')">movida<span></span></div>
+  <div class="hdr-center" id="hdr-title">Atendimento ao Condutor – GTF Movida</div>
+  <button class="btn-home" id="btn-home" onclick="showPage('menu')">⌂ Menu</button>
+</div>
+
+<!-- ═══════════════════ MENU ═══════════════════ -->
+<div class="page active" id="page-menu">
+  <div class="menu-hero">
+    <h1>Atendimento ao Condutor – <em>GTF Movida</em></h1>
+    <p>Selecione o módulo desejado para iniciar</p>
+    <div class="menu-bar"></div>
+  </div>
+
+  <!-- Pit Stop em destaque no TOPO -->
+  <div style="margin-bottom:24px">
+    <div class="sec-lbl" style="color:var(--or)">🏁 Pit Stop Movida</div>
+    <div class="mcard" id="card-pitstop" onclick="showPage('pitstop')" style="background:linear-gradient(135deg,rgba(255,102,0,.18),rgba(255,102,0,.08));border:2px solid var(--or);border-radius:14px;padding:20px;margin-top:0">
+      <div style="width:48px;height:48px;border-radius:12px;background:var(--or);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">🏁</div>
+      <div style="flex:1;min-width:0">
+        <div class="mcard-title" style="font-size:16px;color:var(--or)">Pit Stop Movida</div>
+        <div class="mcard-sub" style="margin-top:3px">Script de oferta · Informações das unidades · Serviços realizados</div>
+      </div>
+      <div class="mcard-arr" style="color:var(--or);font-size:22px">›</div>
+    </div>
+  </div>
+
+  <div class="sec-lbl">🔍 Consultas com busca</div>
+  <div class="grid">
+    <div class="mcard" onclick="showPage('executivos')"><div class="mcard-ico">👤</div><div style="flex:1;min-width:0"><div class="mcard-title">Executivos</div><div class="mcard-sub">Executivos e contatos</div></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('manutencao')"><div class="mcard-ico">🔧</div><div style="flex:1;min-width:0"><div class="mcard-title">Manutenção</div><div class="mcard-sub">Consultor e líder de manutenção</div></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('concessionaria')"><div class="mcard-ico">🏪</div><div style="flex:1;min-width:0"><div class="mcard-title">Concessionária</div><div class="mcard-sub">Busca por UF, cidade ou marca</div></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('contatos')"><div class="mcard-ico">📋</div><div style="flex:1;min-width:0"><div class="mcard-title">Contatos</div><div class="mcard-sub">Agenda de contatos por área</div></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('scripts')"><div class="mcard-ico">📝</div><div style="flex:1;min-width:0"><div class="mcard-title">Scripts</div><div class="mcard-sub">Scripts e padrões de atendimento</div></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('regionais')"><div class="mcard-ico">📍</div><div style="flex:1;min-width:0"><div class="mcard-title">Regionais</div><div class="mcard-sub">Consulta por regional</div></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('workflow')"><div class="mcard-ico">🔄</div><div style="flex:1;min-width:0"><div class="mcard-title">Workflow</div><div class="mcard-sub">Fluxos e processos operacionais</div></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('desmobilizacao')"><div class="mcard-ico">📦</div><div style="flex:1;min-width:0"><div class="mcard-title">Desmobilização</div><div class="mcard-sub">Busca por UF e cidade</div></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('crlv')"><div class="mcard-ico">📄</div><div style="flex:1;min-width:0"><div class="mcard-title">CRLV</div><div class="mcard-sub">Vencimento por estado e final de placa</div></div><div class="mcard-arr">›</div></div>
+  </div>
+
+  <!-- Localização Reboque em destaque -->
+  <div style="margin-top:16px;margin-bottom:8px">
+    <div class="sec-lbl" style="color:#22d3ee">🚨 Reboque</div>
+    <div class="mcard" onclick="showPage('localizacao')" style="background:linear-gradient(135deg,rgba(34,211,238,.15),rgba(34,211,238,.05));border:2px solid #22d3ee;border-radius:14px;padding:20px;margin-top:0">
+      <div style="width:48px;height:48px;border-radius:12px;background:#22d3ee;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0">📍</div>
+      <div style="flex:1;min-width:0">
+        <div class="mcard-title" style="font-size:16px;color:#22d3ee">Localização do Cliente</div>
+        <div class="mcard-sub" style="margin-top:3px">Solicite a localização durante o acionamento de reboque</div>
+      </div>
+      <div class="mcard-arr" style="color:#22d3ee;font-size:22px">›</div>
+    </div>
+  </div>
+
+  <!-- NPS em destaque -->
+  <div style="margin-top:16px">
+    <div class="mcard" onclick="showPage('nps')" style="background:linear-gradient(135deg,rgba(168,85,247,.18),rgba(168,85,247,.06));border:2px solid #a855f7;border-radius:14px;padding:18px">
+      <div style="width:44px;height:44px;border-radius:11px;background:#a855f7;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0">📊</div>
+      <div style="flex:1;min-width:0">
+        <div class="mcard-title" style="font-size:15px;color:#a855f7">Pesquisa NPS</div>
+        <div class="mcard-sub" style="margin-top:3px">Realize a pesquisa de satisfação ao finalizar o atendimento — é muito importante!</div>
+      </div>
+      <div class="mcard-arr" style="color:#a855f7;font-size:22px">›</div>
+    </div>
+  </div>
+
+  <div class="sec-lbl" style="margin-top:24px">🚗 Veículo Reserva</div>
+  <div class="grid">
+    <div class="mcard" onclick="showPage('sublocacao')"><div class="mcard-ico tbl">❓</div><div style="flex:1;min-width:0"><div class="mcard-title">Dúvidas Sublocação</div><div class="mcard-sub">Perguntas e respostas</div><span class="badge-tbl">Tabela</span></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('veiculo_reserva')"><div class="mcard-ico tbl">🚗</div><div style="flex:1;min-width:0"><div class="mcard-title">Procedimento Veículo Reserva</div><div class="mcard-sub">Passo a passo por etapa</div><span class="badge-tbl">Tabela</span></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="abrirPool()"><div class="mcard-ico tbl">📂</div><div style="flex:1;min-width:0"><div class="mcard-title">Pool de Reserva</div><div class="mcard-sub">Abre a planilha de pool do dia</div><span class="badge-tbl">Link</span></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('reserva_and')"><div class="mcard-ico tbl">🚦</div><div style="flex:1;min-width:0"><div class="mcard-title">Reserva em Andamento</div><div class="mcard-sub">Consulta por placa do efetivo</div><span class="badge-tbl">Consulta</span></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('controlador')"><div class="mcard-ico tbl">🎛️</div><div style="flex:1;min-width:0"><div class="mcard-title">Controlador</div><div class="mcard-sub">Centro de custo e orientação</div><span class="badge-tbl">Tabela</span></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('voucher')"><div class="mcard-ico tbl">📋</div><div style="flex:1;min-width:0"><div class="mcard-title">Padrão Liberação de Reserva</div><div class="mcard-sub">Gera voucher de veículo reserva</div><span class="badge-tbl">Gerador</span></div><div class="mcard-arr">›</div></div>
+    <div class="mcard" onclick="showPage('upgrade')"><div class="mcard-ico tbl">⭐</div><div style="flex:1;min-width:0"><div class="mcard-title">Upgrade / Reserva</div><div class="mcard-sub">Opções de upgrade por categoria</div><span class="badge-tbl">Tabela</span></div><div class="mcard-arr">›</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ LOCALIZAÇÃO REBOQUE ═══════════════════ -->
+<div class="page" id="page-localizacao">
+  <div class="mod-hdr">
+    <div class="mod-ico" style="background:#22d3ee;border-color:#22d3ee">📍</div>
+    <div><div class="mod-title" style="color:#22d3ee">Localização do Cliente</div><div class="mod-sub">Painel em tempo real — atualiza automaticamente</div></div>
+  </div>
+
+  <!-- Link para o cliente -->
+  <div class="sbox" style="margin-bottom:20px;border-color:rgba(34,211,238,.3)">
+    <span class="slbl" style="color:#22d3ee">📱 Link para o cliente</span>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px">
+      <div style="flex:1;background:var(--bg3);border:1.5px solid rgba(34,211,238,.4);border-radius:9px;padding:12px 16px;font-size:14px;color:#22d3ee;font-weight:600;font-family:monospace;word-break:break-all">https://sacgtf.github.io/atendimentofrotas/localizacao.html</div>
+      <button onclick="locCopiarLink()" style="background:#22d3ee;color:#1e2535;border:none;border-radius:9px;padding:12px 20px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;flex-shrink:0">📋 Copiar link</button>
+    </div>
+    <div style="background:var(--bg3);border-radius:8px;padding:14px 16px;border-left:3px solid #22d3ee">
+      <div class="flbl" style="color:#22d3ee;margin-bottom:6px">📞 Script de solicitação</div>
+      <div style="font-size:14px;color:var(--tx);line-height:1.8">
+        <em style="color:var(--tx2)">"Senhor(a), para acionar o reboque precisamos da sua localização. Acesse pelo celular: <strong style="color:#22d3ee">sacgtf.github.io/atendimentofrotas/localizacao.html</strong> — clique no botão laranja e aguarde a confirmação."</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- Painel de localizações -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px">
+    <div class="flbl" style="margin:0;font-size:13px">📍 Localizações recebidas <span id="loc-count" style="background:rgba(34,211,238,.15);color:#22d3ee;border-radius:5px;padding:2px 8px;font-size:11px;margin-left:6px">0</span></div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <label style="display:inline-flex;align-items:center;gap:6px;cursor:pointer;font-size:13px;color:var(--tx2)">
+        <input type="checkbox" id="loc-auto" onchange="locToggleAuto(this.checked)" style="accent-color:#22d3ee;width:15px;height:15px"> Auto (10s)
+      </label>
+      <button onclick="locAtualizar()" style="background:transparent;border:1.5px solid rgba(34,211,238,.4);color:#22d3ee;border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">🔄 Atualizar</button>
+      <button onclick="locLimpar()" style="background:transparent;border:1px solid var(--bdr);color:var(--tx3);border-radius:8px;padding:8px 14px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit">🗑️ Limpar tudo</button>
+    </div>
+  </div>
+  <div id="loc-status" style="font-size:12px;color:var(--tx3);margin-bottom:10px;text-align:right"></div>
+  <div id="loc-lista">
+    <div class="ecrd"><div class="eico">📍</div><div class="etitle">Aguardando localizações</div><div class="esub">Quando o cliente acessar o link e compartilhar, aparece aqui automaticamente</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ EXECUTIVOS ═══════════════════ -->
+<div class="page" id="page-executivos">
+  <div class="mod-hdr"><div class="mod-ico">👤</div><div><div class="mod-title">Executivos</div><div class="mod-sub">Busca por placa, CNPJ ou razão social</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Pesquisar</span>
+    <div class="srow">
+      <input class="sinp" id="ex-placa" placeholder="Placa (busca exata)" oninput="this.value=this.value.toUpperCase()" style="flex:0 0 140px"/>
+      <input class="sinp" id="ex-cnpj" placeholder="CNPJ" style="flex:0 0 160px"/>
+      <div class="ac-wrap"><input class="sinp" id="ex-razao" placeholder="Razão social" autocomplete="off" oninput="acExec(this.value)"/><div class="ac-list" id="ex-razao-list"></div></div>
+      <button class="btn-srch" onclick="searchExec()">Buscar</button>
+    </div>
+    <div class="shint">Placa e CNPJ: exata · Razão social: autocomplete · <strong>Enter</strong> para buscar</div>
+  </div>
+  <div id="ex-results"></div>
+</div>
+
+<!-- ═══════════════════ MANUTENÇÃO ═══════════════════ -->
+<div class="page" id="page-manutencao">
+  <div class="mod-hdr"><div class="mod-ico">🔧</div><div><div class="mod-title">Manutenção</div><div class="mod-sub">Busca por placa, CNPJ ou cliente</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Pesquisar</span>
+    <div class="srow">
+      <input class="sinp" id="mn-placa" placeholder="Placa (busca exata)" oninput="this.value=this.value.toUpperCase()" style="flex:0 0 140px"/>
+      <input class="sinp" id="mn-cnpj" placeholder="CNPJ" style="flex:0 0 160px"/>
+      <div class="ac-wrap"><input class="sinp" id="mn-cliente" placeholder="Cliente" autocomplete="off" oninput="acManut(this.value)"/><div class="ac-list" id="mn-cliente-list"></div></div>
+      <button class="btn-srch" onclick="searchManut()">Buscar</button>
+    </div>
+    <div class="shint">Placa e CNPJ: exata · Cliente: autocomplete · <strong>Enter</strong> para buscar</div>
+  </div>
+  <div id="mn-results"></div>
+</div>
+
+<!-- ═══════════════════ CONCESSIONÁRIA ═══════════════════ -->
+<div class="page" id="page-concessionaria">
+  <div class="mod-hdr"><div class="mod-ico">🏪</div><div><div class="mod-title">Concessionária</div><div class="mod-sub">Filtre por UF, cidade e marca</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Filtrar</span>
+    <div class="srow">
+      <select class="ssel" id="co-uf" onchange="updateCidades();updateMarcas()"><option value="">Selecione a UF</option></select>
+      <select class="ssel" id="co-cidade" onchange="updateMarcas()"><option value="">Todas as cidades</option></select>
+      <select class="ssel" id="co-marca"><option value="">Todas as marcas</option></select>
+      <button class="btn-srch" onclick="searchConc()">Buscar</button>
+    </div>
+  </div>
+  <div id="co-results"></div>
+</div>
+
+<!-- ═══════════════════ CONTATOS ═══════════════════ -->
+<div class="page" id="page-contatos">
+  <div class="mod-hdr"><div class="mod-ico">📋</div><div><div class="mod-title">Contatos</div><div class="mod-sub">Busca por área</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Pesquisar</span>
+    <div class="srow">
+      <input class="sinp" id="ct-area" placeholder="Digite a área..."/>
+      <button class="btn-srch" onclick="searchContatos()">Buscar</button>
+    </div>
+  </div>
+  <div id="ct-results"></div>
+</div>
+
+<!-- ═══════════════════ SCRIPTS ═══════════════════ -->
+<div class="page" id="page-scripts">
+  <div class="mod-hdr"><div class="mod-ico">📝</div><div><div class="mod-title">Scripts</div><div class="mod-sub">Selecione o tipo e a solicitação</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Pesquisar</span>
+    <div class="srow">
+      <select class="ssel" id="sc-tipo" onchange="updateScripts()"><option value="">Todos os tipos</option></select>
+      <select class="ssel" id="sc-sol" onchange="updateScUF()"><option value="">Selecione a solicitação</option></select>
+      <select class="ssel" id="sc-uf" style="display:none"><option value="">Selecione a UF</option></select>
+      <button class="btn-srch" onclick="searchScript()">Buscar</button>
+    </div>
+  </div>
+  <div id="sc-results"></div>
+</div>
+
+<!-- ═══════════════════ REGIONAIS ═══════════════════ -->
+<div class="page" id="page-regionais">
+  <div class="mod-hdr"><div class="mod-ico">📍</div><div><div class="mod-title">Regionais</div><div class="mod-sub">Selecione o estado para ver o regional responsável</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Selecione o Estado</span>
+    <div class="srow">
+      <select class="ssel" id="rg-estado" onchange="searchRegional()">
+        <option value="">Selecione o estado...</option>
+        <option value="AC">AC — Acre</option>
+        <option value="AL">AL — Alagoas</option>
+        <option value="AP">AP — Amapá</option>
+        <option value="AM">AM — Amazonas</option>
+        <option value="BA">BA — Bahia</option>
+        <option value="CE">CE — Ceará</option>
+        <option value="DF">DF — Distrito Federal</option>
+        <option value="ES">ES — Espírito Santo</option>
+        <option value="GO">GO — Goiás</option>
+        <option value="MA">MA — Maranhão</option>
+        <option value="MT">MT — Mato Grosso</option>
+        <option value="MS">MS — Mato Grosso do Sul</option>
+        <option value="MG">MG — Minas Gerais</option>
+        <option value="PA">PA — Pará</option>
+        <option value="PB">PB — Paraíba</option>
+        <option value="PR">PR — Paraná</option>
+        <option value="PE">PE — Pernambuco</option>
+        <option value="PI">PI — Piauí</option>
+        <option value="RJ">RJ — Rio de Janeiro</option>
+        <option value="RN">RN — Rio Grande do Norte</option>
+        <option value="RS">RS — Rio Grande do Sul</option>
+        <option value="RO">RO — Rondônia</option>
+        <option value="RR">RR — Roraima</option>
+        <option value="SC">SC — Santa Catarina</option>
+        <option value="SP">SP — São Paulo</option>
+        <option value="SE">SE — Sergipe</option>
+        <option value="TO">TO — Tocantins</option>
+      </select>
+    </div>
+  </div>
+  <div id="rg-results"></div>
+</div>
+
+<!-- ═══════════════════ WORKFLOW ═══════════════════ -->
+<div class="page" id="page-workflow">
+  <div class="mod-hdr"><div class="mod-ico">🔄</div><div><div class="mod-title">Workflow</div><div class="mod-sub">Selecione subárea e motivo</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Pesquisar</span>
+    <div class="srow">
+      <select class="ssel" id="wf-subarea" onchange="updateMotivos()"><option value="">Selecione a subárea</option></select>
+      <select class="ssel" id="wf-motivo"><option value="">Todos os motivos</option></select>
+      <button class="btn-srch" onclick="searchWorkflow()">Buscar</button>
+    </div>
+  </div>
+  <div id="wf-results"></div>
+</div>
+
+<!-- ═══════════════════ DESMOBILIZAÇÃO ═══════════════════ -->
+<div class="page" id="page-desmobilizacao">
+  <div class="mod-hdr"><div class="mod-ico">📦</div><div><div class="mod-title">Desmobilização</div><div class="mod-sub">Selecione UF e busque por cidade</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Filtrar</span>
+    <div class="srow">
+      <select class="ssel" id="dm-uf" onchange="updateDmCidades()" style="flex:0 0 120px"><option value="">UF</option></select>
+      <div class="ac-wrap"><input class="sinp" id="dm-cidade" placeholder="Cidade (autocomplete)" autocomplete="off" oninput="acDesm(this.value)"/><div class="ac-list" id="dm-cidade-list"></div></div>
+      <button class="btn-srch" onclick="searchDesm()">Buscar</button>
+    </div>
+  </div>
+  <div id="dm-results"></div>
+</div>
+
+<!-- ═══════════════════ CRLV ═══════════════════ -->
+<div class="page" id="page-crlv">
+  <div class="mod-hdr"><div class="mod-ico">📄</div><div><div class="mod-title">CRLV</div><div class="mod-sub">Consulta por UF e final da placa</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Pesquisar</span>
+    <div class="srow">
+      <select class="ssel" id="cr-uf">
+        <option value="">Selecione o Estado (UF)</option>
+        <option value="AC">AC — Acre</option>
+        <option value="AL">AL — Alagoas</option>
+        <option value="AP">AP — Amapá</option>
+        <option value="AM">AM — Amazonas</option>
+        <option value="BA">BA — Bahia</option>
+        <option value="CE">CE — Ceará</option>
+        <option value="DF">DF — Distrito Federal</option>
+        <option value="ES">ES — Espírito Santo</option>
+        <option value="GO">GO — Goiás</option>
+        <option value="MA">MA — Maranhão</option>
+        <option value="MT">MT — Mato Grosso</option>
+        <option value="MS">MS — Mato Grosso do Sul</option>
+        <option value="MG">MG — Minas Gerais</option>
+        <option value="PA">PA — Pará</option>
+        <option value="PB">PB — Paraíba</option>
+        <option value="PR">PR — Paraná</option>
+        <option value="PE">PE — Pernambuco</option>
+        <option value="PI">PI — Piauí</option>
+        <option value="RJ">RJ — Rio de Janeiro</option>
+        <option value="RN">RN — Rio Grande do Norte</option>
+        <option value="RS">RS — Rio Grande do Sul</option>
+        <option value="RO">RO — Rondônia</option>
+        <option value="RR">RR — Roraima</option>
+        <option value="SC">SC — Santa Catarina</option>
+        <option value="SP">SP — São Paulo</option>
+        <option value="SE">SE — Sergipe</option>
+        <option value="TO">TO — Tocantins</option>
+      </select>
+      <select class="ssel" id="cr-final">
+        <option value="">Final da Placa</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+      </select>
+      <button class="btn-srch" onclick="searchCrlv()">Buscar</button>
+    </div>
+  </div>
+  <div id="cr-results"></div>
+</div>
+
+<!-- ═══════════════════ UPGRADE ═══════════════════ -->
+<div class="page" id="page-upgrade">
+  <div class="mod-hdr"><div class="mod-ico">⭐</div><div><div class="mod-title">Upgrade / Reserva</div><div class="mod-sub">Consulta por categoria</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Pesquisar</span>
+    <div class="srow">
+      <select class="ssel" id="up-cat"><option value="">Selecione a categoria</option></select>
+      <button class="btn-srch" onclick="searchUpgrade()">Buscar</button>
+    </div>
+  </div>
+  <div id="up-results"></div>
+</div>
+
+<!-- ═══════════════════ SUBLOCAÇÃO ═══════════════════ -->
+<div class="page" id="page-sublocacao">
+  <div class="mod-hdr"><div class="mod-ico">❓</div><div><div class="mod-title">Dúvidas Sublocação</div><div class="mod-sub">Clique na pergunta para ver a resposta</div></div></div>
+  <div id="sub-results"></div>
+</div>
+
+<!-- ═══════════════════ VEÍCULO RESERVA ═══════════════════ -->
+<div class="page" id="page-veiculo_reserva">
+  <div class="mod-hdr"><div class="mod-ico">🚗</div><div><div class="mod-title">Procedimento Veículo Reserva</div><div class="mod-sub">Passo a passo para solicitar veículo reserva</div></div></div>
+  <div id="vr-content"></div>
+</div>
+
+<!-- ═══════════════════ CONTROLADOR ═══════════════════ -->
+<div class="page" id="page-controlador">
+  <div class="mod-hdr"><div class="mod-ico">🎛️</div><div><div class="mod-title">Controlador</div><div class="mod-sub">Lista completa de empresas com orientação</div></div></div>
+  <div id="ctl-results"></div>
+</div>
+
+<!-- ═══════════════════ PESQUISA NPS ═══════════════════ -->
+<div class="page" id="page-nps">
+  <div class="mod-hdr"><div class="mod-ico">📊</div><div><div class="mod-title">Pesquisa NPS</div><div class="mod-sub">Preencha chamado e placa para gerar o link</div></div></div>
+  <div class="sbox">
+    <span class="slbl">📋 Dados do Atendimento</span>
+    <div class="srow">
+      <input class="sinp" id="gl-chamado" placeholder="Número do Chamado"/>
+      <input class="sinp" id="gl-placa" placeholder="Placa" oninput="this.value=this.value.toUpperCase()"/>
+      <button class="btn-srch" onclick="gerarLink()">Gerar Link</button>
+    </div>
+    <div class="shint">Preencha os campos e clique em <strong>Gerar Link</strong> · <strong>Enter</strong> na placa para gerar</div>
+  </div>
+  <div id="gl-links-list"></div>
+  <div id="gl-empty">
+    <div class="ecrd"><div class="eico">📊</div><div class="etitle">Nenhum link gerado ainda</div><div class="esub">Preencha chamado e placa e clique em Gerar Link</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════ VOUCHER RESERVA ═══════════════════ -->
+<div class="page" id="page-voucher">
+  <div class="mod-hdr"><div class="mod-ico">📋</div><div><div class="mod-title">Padrão Liberação de Reserva</div><div class="mod-sub">Preencha os campos e gere o voucher</div></div></div>
+  <div class="sbox">
+    <span class="slbl">📝 Dados do Voucher</span>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin-bottom:14px">
+      <div>
+        <div class="flbl" style="margin-bottom:6px">Voucher (número)</div>
+        <input class="sinp" id="vc-voucher" placeholder="Ex: 123456" style="width:100%"/>
+      </div>
+      <div>
+        <div class="flbl" style="margin-bottom:6px">Loja Movida</div>
+        <input class="sinp" id="vc-loja" placeholder="Ex: Movida Paulista" style="width:100%"/>
+      </div>
+      <div>
+        <div class="flbl" style="margin-bottom:6px">Endereço</div>
+        <input class="sinp" id="vc-endereco" placeholder="Ex: Av. Paulista, 1000 - SP" style="width:100%"/>
+      </div>
+      <div>
+        <div class="flbl" style="margin-bottom:6px">Data de Retirada</div>
+        <input class="sinp" id="vc-retirada" placeholder="Ex: 20/03/2026 às 10:00" style="width:100%"/>
+      </div>
+      <div>
+        <div class="flbl" style="margin-bottom:6px">Data de Devolução</div>
+        <input class="sinp" id="vc-devolucao" placeholder="Ex: 25/03/2026 às 10:00" style="width:100%"/>
+      </div>
+      <div>
+        <div class="flbl" style="margin-bottom:6px">Grupo</div>
+        <input class="sinp" id="vc-grupo" placeholder="Ex: Hatch Médio" style="width:100%"/>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px">
+      <button class="btn-srch" onclick="gerarVoucher()">📋 Gerar Voucher</button>
+      <button onclick="limparVoucher()" style="background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:9px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">✕ Limpar</button>
+    </div>
+  </div>
+  <div id="vc-result" style="display:none">
+    <div class="rcard" style="border-left-color:var(--or)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px">
+        <div class="flbl" style="margin:0;color:var(--or)">✅ Voucher gerado</div>
+        <button onclick="copiarVoucher()" style="background:var(--or);color:#fff;border:none;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit">📋 Copiar texto</button>
+      </div>
+      <div id="vc-texto" style="background:var(--bg3);border-radius:9px;padding:18px;font-size:14px;color:var(--tx);line-height:1.9;white-space:pre-wrap;word-break:break-word;border:1px solid var(--bdr)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ PIT STOP ═══════════════════ -->
+<div class="page" id="page-pitstop">
+  <div class="mod-hdr">
+    <div class="mod-ico" style="background:var(--or);border-color:var(--or)">🏁</div>
+    <div><div class="mod-title" style="color:var(--or)">Pit Stop Movida</div><div class="mod-sub">Script de oferta · Informações · Serviços realizados</div></div>
+  </div>
+  <!-- 3 botões internos -->
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px">
+    <button onclick="pitTab('script')" id="ptab-script" class="ptab ptab-active">📢 Script de Oferta</button>
+    <button onclick="pitTab('info')"   id="ptab-info"   class="ptab">📍 Informações dos Pit Stop</button>
+    <button onclick="pitTab('servico')" id="ptab-servico" class="ptab">🔧 Serviços Realizados</button>
+  </div>
+
+  <!-- Aba: Script -->
+  <div id="pit-script">
+    <div class="rcard" style="border-left-color:var(--or)">
+      <div style="margin-bottom:14px">
+        <div class="grp-lbl">Script de Oferta — Pit Stop Movida</div>
+      </div>
+      <div id="pit-script-texto" class="tblock" style="font-size:14px;line-height:1.8"></div>
+    </div>
+  </div>
+
+  <!-- Aba: Informações -->
+  <div id="pit-info" style="display:none">
+    <div class="sbox" style="margin-bottom:18px">
+      <span class="slbl">📍 Selecione a UF</span>
+      <div id="pit-ufs" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:0"></div>
+    </div>
+    <div id="pit-cidades" style="display:none">
+      <div class="sbox" style="margin-bottom:18px">
+        <span class="slbl" id="pit-cidades-label">Cidades</span>
+        <div id="pit-cidades-btns" style="display:flex;flex-wrap:wrap;gap:8px"></div>
+      </div>
+    </div>
+    <div id="pit-info-results"></div>
+  </div>
+
+  <!-- Aba: Serviços -->
+  <div id="pit-servico" style="display:none">
+    <div class="sbox" style="margin-bottom:18px">
+      <span class="slbl">🔧 Buscar serviço</span>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <!-- Campo Parte -->
+        <div>
+          <div class="flbl" style="margin-bottom:6px">Parte</div>
+          <div class="ac-wrap">
+            <input class="sinp" id="pit-parte-inp" placeholder="Selecione ou digite a parte..." autocomplete="off"
+              oninput="pitParteKw(this.value)" onfocus="pitParteKw(this.value)"/>
+            <div class="ac-list" id="pit-parte-list"></div>
+          </div>
+        </div>
+        <!-- Campo Sintoma -->
+        <div>
+          <div class="flbl" style="margin-bottom:6px">Sintoma</div>
+          <div class="ac-wrap">
+            <input class="sinp" id="pit-sintoma-inp" placeholder="Selecione ou digite o sintoma..." autocomplete="off"
+              oninput="pitSintomaKw(this.value)" onfocus="pitSintomaKw(this.value)"/>
+            <div class="ac-list" id="pit-sintoma-list"></div>
+          </div>
+        </div>
+      </div>
+      <button onclick="pitLimpar()" style="background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:9px;padding:8px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='var(--or)';this.style.color='var(--or)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--tx2)'">✕ Limpar</button>
+    </div>
+    <div id="pit-servico-results"></div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════ RESERVA EM ANDAMENTO ═══════════════════ -->
+<div class="page" id="page-reserva_and">
+  <div class="mod-hdr"><div class="mod-ico">🚦</div><div><div class="mod-title">Reserva em Andamento</div><div class="mod-sub">Digite a placa do efetivo para verificar se há reserva ativa</div></div></div>
+  <div class="sbox">
+    <span class="slbl">🔎 Placa do Efetivo</span>
+    <div class="srow">
+      <input class="sinp" id="ra-placa" placeholder="Digite a placa do efetivo..." oninput="this.value=this.value.toUpperCase()" style="max-width:260px"/>
+      <button class="btn-srch" onclick="searchReserva()">Buscar</button>
+      <button onclick="limparReserva()" style="background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:9px;padding:10px 18px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s" onmouseover="this.style.borderColor='var(--or)';this.style.color='var(--or)'" onmouseout="this.style.borderColor='var(--bdr)';this.style.color='var(--tx2)'">✕ Limpar</button>
+    </div>
+    <div class="shint">Busca exata pela placa · <strong>Enter</strong> para buscar</div>
+  </div>
+  <!-- Popup Liberado -->
+  <div id="ra-liberado" style="display:none;animation:fi .25s ease">
+    <div class="rcard" style="border-left-color:#4ade80;border-left-width:4px;text-align:center;padding:32px">
+      <div style="font-size:48px;margin-bottom:12px">✅</div>
+      <div style="font-size:28px;font-weight:800;color:#4ade80;margin-bottom:10px;letter-spacing:1px">LIBERADO</div>
+      <div style="font-size:15px;color:var(--tx2);line-height:1.7;max-width:420px;margin:0 auto">Pode seguir com a liberação de um veículo reserva.<br>Essa placa não possui nenhum veículo reserva associado nesse momento.</div>
+    </div>
+  </div>
+  <!-- Resultado Bloqueado -->
+  <div id="ra-bloqueado" style="display:none;animation:fi .25s ease">
+    <div style="background:rgba(248,113,113,.1);border:2px solid #f87171;border-radius:12px;padding:18px 22px;margin-bottom:16px;display:flex;align-items:center;gap:14px">
+      <span style="font-size:36px">🚫</span>
+      <div>
+        <div style="font-size:22px;font-weight:800;color:#f87171;letter-spacing:1px">BLOQUEADO</div>
+        <div style="font-size:13px;color:var(--tx2);margin-top:3px">Esta placa já possui um veículo reserva associado</div>
+      </div>
+    </div>
+    <div id="ra-results"></div>
+  </div>
+</div>
+
+
+<script>
+// ── DADOS ─────────────────────────────────────────────────────────────────
+
+// ════════════════════════════════════════════════════
+// CONFIGURAÇÃO — preencha os dois campos abaixo
+// ════════════════════════════════════════════════════
+var CONFIG = {
+  SHEET_ID: '1UHubaA9lvjAEhDj-PbhKQkR22pPxmWXpRlUTK0al344',
+  API_KEY:  'AIzaSyDWBrB3X2S1Q673gyeYo_P1CbX7peSdfqs'
+};
+// ════════════════════════════════════════════════════
+
+var ABAS = {
+  executivos:      'Executivos',
+  manutencao:      'Manutenção',
+  concessionaria:  'Concessionária',
+  contatos:        'Contatos',
+  scripts:         'Scripts',
+  regionais:       'Regionais',
+  workflow:        'Workflow',
+  crlv:            'CRLV',
+  upgrade:         'Upgrade',
+  sublocacao:      'Sublocação',
+  veiculo_reserva: 'Veículo Reserva',
+  desmobilizacao:  'Desmobilização',
+  pit_stop:        'Pit Stop',
+  servicos_pit:    'Serviços Pit Stop',
+  link_pool:       'Link Pool',
+  reserva_and:     'Reserva em andamento',
+  controlador:     'Controlador'
+};
+
+var GTF = {};
+
+function fetchAba(nomeAba) {
+  var url = 'https://sheets.googleapis.com/v4/spreadsheets/' + CONFIG.SHEET_ID +
+            '/values/' + encodeURIComponent(nomeAba) +
+            '?key=' + CONFIG.API_KEY;
+  return fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.error) { console.warn('Erro aba ' + nomeAba + ':', data.error.message); return []; }
+      var rows = data.values || [];
+      if (rows.length < 2) return [];
+      var headers = rows[0].map(function(h) { return String(h||'').trim(); });
+      return rows.slice(1).map(function(row) {
+        var obj = {};
+        headers.forEach(function(h, i) {
+          obj[h] = String(row[i] !== undefined ? row[i] : '').trim();
+        });
+        return obj;
+      }).filter(function(obj) {
+        return Object.values(obj).some(function(v) { return v !== ''; });
+      });
+    });
+}
+
+function processarRegionais(rows) {
+  if (!rows.length) return [];
+  return rows.map(function(r) {
+    var vals = Object.values(r);
+    var ativStr = vals[3] || '';
+    var atividades = ativStr ? ativStr.split('|').map(function(a){return a.trim();}).filter(Boolean) : [];
+    return { Nome: vals[0]||'', Email: vals[1]||'', UF: vals[2]||'', Atividades: atividades };
+  }).filter(function(r){ return r.Nome && r.UF; });
+}
+
+function processarCrlv(rows) {
+  if (!rows || !rows.length) return [];
+  return rows.map(function(r) {
+    if (!r) return null;
+    var vals = Object.values(r);
+    return {
+      Estado:    String(vals[0]||'').trim(),
+      Final:     String(vals[1]||'').replace(/\.0$/,'').trim(),
+      Vencimento:String(vals[2]||'').trim()
+    };
+  }).filter(function(r){ return r && r.Estado && r.Final; });
+}
+
+function processarVR(rows) {
+  var defs = [
+    { label: 'Validação', n: [1,2,3,4,5,6,7] },
+    { label: 'Etapa 1 — Seu itinerário', n: [8,9,10,11,12,13,14] },
+    { label: 'Etapa 2 — Selecione um veículo', n: [15] },
+    { label: 'Etapa 3 — Proteções e extras', n: [16] },
+    { label: 'Etapa 4 — Finalizar reserva', n: [17,18,19,20,21,22,23,24,25,26,27,28,29,30] }
+  ];
+  var map = {};
+  rows.forEach(function(r) {
+    var v = Object.values(r);
+    try { var n = parseInt(parseFloat(v[0])); if (!isNaN(n)) map[n] = { etapa:n, passo:v[1]||'', orientacao:v[2]||'' }; } catch(e) {}
+  });
+  return defs.map(function(g) {
+    var p = g.n.filter(function(n) { return map[n]; }).map(function(n) { return map[n]; });
+    return p.length ? { label: g.label, passos: p } : null;
+  }).filter(Boolean);
+}
+
+function initSelects() {
+  var ufs = [...new Set((GTF.concessionaria||[]).map(function(r){return r.UF;}))].filter(Boolean).sort();
+  ufs.forEach(function(u){ document.getElementById('co-uf').innerHTML += '<option value="'+u+'">'+u+'</option>'; });
+  updateMarcas();
+  var dufs = [...new Set((GTF.desmobilizacao||[]).map(function(r){return r.UF;}))].filter(Boolean).sort();
+  dufs.forEach(function(u){ document.getElementById('dm-uf').innerHTML += '<option value="'+u+'">'+u+'</option>'; });
+  // cr-uf e cr-final já estão fixos no HTML
+  (GTF.upgrade||[]).forEach(function(r){ if(r.CATEGORIA) document.getElementById('up-cat').innerHTML += '<option value="'+r.CATEGORIA+'">'+r.CATEGORIA+'</option>'; });
+  var tipos = [...new Set((GTF.scripts||[]).map(function(r){return r['Padrão ou Script']||''}))].filter(Boolean).sort();
+  tipos.forEach(function(t){ document.getElementById('sc-tipo').innerHTML += '<option value="'+t+'">'+t+'</option>'; });
+  updateScripts();
+  var subs = [...new Set((GTF.workflow||[]).map(function(r){return r['SUBÁREA']||''}))].filter(Boolean).sort();
+  subs.forEach(function(s){ document.getElementById('wf-subarea').innerHTML += '<option value="'+s+'">'+s+'</option>'; });
+  updateMotivos();
+}
+
+// ── AUTO-REFRESH ─────────────────────────────────────────────
+// 1. Carrega ao abrir
+// 2. Recarrega todo dia ao meio-dia
+// 3. Recarrega quando o usuário volta para a aba após 30 min fora
+// ─────────────────────────────────────────────────────────────
+
+var _lastLoad = null;
+var _refreshTimer = null;
+
+
+// ── LOGIN ─────────────────────────────────────────────────────────────────
+var _AUTH = { user: 'frotas.movida', pass: 'movida@2026' };
+var _logado = false;
+
+document.addEventListener('keydown', function(e){
+  if(e.key === 'Enter' && !_logado) fazerLogin();
+});
+
+function fazerLogin(){
+  var u = document.getElementById('login-user').value.trim();
+  var p = document.getElementById('login-pass').value.trim();
+  if(u === _AUTH.user && p === _AUTH.pass){
+    _logado = true;
+    document.getElementById('login-screen').style.display = 'none';
+    carregarTodos(false);
+  } else {
+    var err = document.getElementById('login-err');
+    err.style.display = 'block';
+    document.getElementById('login-pass').value = '';
+    document.getElementById('login-pass').focus();
+    setTimeout(function(){ err.style.display = 'none'; }, 3000);
+  }
+}
+
+function carregarTodos(silencioso) {
+  var keys  = Object.keys(ABAS);
+  var total = keys.length, done = 0;
+
+  if (!silencioso) {
+    var overlay = document.getElementById('loading-overlay');
+    var msg     = document.getElementById('loading-msg');
+    if (overlay) overlay.style.display = 'flex';
+    if (msg)     msg.textContent = 'Carregando dados...';
+  }
+
+  var promises = keys.map(function(key) {
+    return fetchAba(ABAS[key])
+      .then(function(rows) {
+        if      (key === 'regionais')       GTF.regionais       = processarRegionais(rows);
+        else if (key === 'crlv')            GTF.crlv            = processarCrlv(rows);
+        else if (key === 'veiculo_reserva') GTF.veiculo_reserva = processarVR(rows);
+        else                                GTF[key]            = rows;
+        done++;
+        if (!silencioso) {
+          var msg = document.getElementById('loading-msg');
+          if (msg) msg.textContent = 'Carregando... ' + done + '/' + total + ' (' + ABAS[key] + ')';
+        }
+      })
+      .catch(function(e) {
+        console.warn('Erro na aba ' + ABAS[key] + ':', e);
+        GTF[key] = []; done++;
+      });
+  });
+
+  return Promise.all(promises).then(function() {
+    _lastLoad = new Date();
+    if (!silencioso) {
+      document.getElementById('loading-overlay').style.display = 'none';
+    }
+    // Reinicia selects com dados novos
+    resetSelects();
+    initSelects();
+    agendarProximoMeiodia();
+    console.log('Dados atualizados em ' + _lastLoad.toLocaleTimeString('pt-BR'));
+    if (silencioso) mostrarToast('Dados atualizados automaticamente ✓');
+  });
+}
+
+function resetSelects() {
+  ['co-uf','co-cidade','co-marca',
+   'dm-uf',
+   'up-cat','sc-tipo','sc-sol',
+   'wf-subarea','wf-motivo'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    var first = el.options[0];
+    el.innerHTML = '';
+    if (first) el.appendChild(first);
+  });
+  // cr-uf e cr-final são fixos no HTML — não resetar
+}
+
+function agendarProximoMeiodia() {
+  if (_refreshTimer) clearTimeout(_refreshTimer);
+  var agora  = new Date();
+  var meiodia = new Date();
+  meiodia.setHours(12, 0, 0, 0);
+  // Se já passou do meio-dia hoje, agenda para amanhã
+  if (agora >= meiodia) meiodia.setDate(meiodia.getDate() + 1);
+  var ms = meiodia - agora;
+  _refreshTimer = setTimeout(function() {
+    console.log('Atualizando dados — meio-dia!');
+    carregarTodos(true);
+  }, ms);
+  console.log('Próxima atualização agendada para ' + meiodia.toLocaleString('pt-BR'));
+}
+
+function mostrarToast(txt) {
+  var t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = txt;
+  t.style.opacity = '1';
+  t.style.transform = 'translateY(0)';
+  setTimeout(function() {
+    t.style.opacity = '0';
+    t.style.transform = 'translateY(20px)';
+  }, 3000);
+}
+
+// Recarrega ao voltar para a aba após 30 min fora
+document.addEventListener('visibilitychange', function() {
+  if (document.visibilityState === 'visible' && _lastLoad) {
+    var minutos = (new Date() - _lastLoad) / 1000 / 60;
+    if (minutos >= 30) {
+      console.log('Usuário voltou após ' + Math.round(minutos) + ' min — recarregando dados...');
+      carregarTodos(true);
+    }
+  }
+});
+
+window.addEventListener('DOMContentLoaded', function() {
+  // Aguarda login — carregarTodos só é chamado após autenticação
+  document.getElementById('login-user').focus();
+});
+
+
+// ── NAVEGAÇÃO ─────────────────────────────────────────────────────────────
+var TITLES={
+  executivos:'Executivos',manutencao:'Manutenção',concessionaria:'Concessionária',
+  contatos:'Contatos',scripts:'Scripts',regionais:'Regionais',workflow:'Workflow',
+  desmobilizacao:'Desmobilização',crlv:'CRLV',upgrade:'Upgrade / Reserva',
+  sublocacao:'Dúvidas Sublocação',veiculo_reserva:'Veículo Reserva',
+  controlador:'Controlador',nps:'Pesquisa NPS',voucher:'Padrão Liberação de Reserva',pitstop:'Pit Stop Movida',reserva_and:'Reserva em Andamento'
+};
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  var pg=document.getElementById('page-'+id);
+  if(pg) pg.classList.add('active');
+  var isMenu=(id==='menu');
+  document.getElementById('btn-home').style.display=isMenu?'none':'flex';
+  document.getElementById('hdr-title').textContent=isMenu?'Atendimento ao Condutor – GTF Movida':(TITLES[id]||id);
+  window.scrollTo(0,0);
+  if(id==='sublocacao')    renderSublocacao();
+  if(id==='veiculo_reserva') renderVeiculoReserva();
+  if(id==='controlador')   renderControlador();
+  if(id==='pitstop')       { pitTab('script'); }
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function N(s){return String(s||'').toLowerCase().trim().normalize('NFD').replace(/[\u0300-\u036f]/g,'');}
+function E(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function HL(s,q){
+  if(!q||!s)return E(s);
+  try{var r=new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');return E(String(s)).replace(r,function(m){return '<mark>'+m+'</mark>';});}
+  catch(e){return E(s);}
+}
+function fmtTel(v){
+  var s=String(v||'').trim(),d=s.replace(/\D/g,'');
+  if(d.length>=8&&d.length<=13&&/^[\d\s\(\)\-\+\.]+$/.test(s))
+    return '<a class="tel-a" href="tel:+55'+d+'">'+E(s)+'</a>';
+  return E(s);
+}
+function noRes(id){document.getElementById(id).innerHTML='<div class="ecrd"><div class="eico">🔍</div><div class="etitle">Nenhum resultado</div><div class="esub">Tente outros termos</div></div>';}
+
+// Enter nos inputs
+document.addEventListener('keydown',function(e){
+  if(e.key!=='Enter')return;
+  var t=e.target;
+  if(t.id==='ex-placa'||t.id==='ex-cnpj'||t.id==='ex-razao') searchExec();
+  else if(t.id==='ra-placa') searchReserva();
+  else if(t.id==='mn-placa'||t.id==='mn-cnpj'||t.id==='mn-cliente') searchManut();
+  else if(t.id==='ct-area') searchContatos();
+  else if(t.id==='rg-uf') searchRegional();
+  else if(t.id==='ctl-filter') filterCtl();
+  else if(t.id==='gl-chamado') document.getElementById('gl-placa').focus();
+  else if(t.id==='gl-placa') gerarLink();
+});
+
+// Fechar autocomplete ao clicar fora
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#ex-razao')&&!e.target.closest('#ex-razao-list'))
+    document.getElementById('ex-razao-list').classList.remove('open');
+  if(!e.target.closest('#mn-cliente')&&!e.target.closest('#mn-cliente-list'))
+    document.getElementById('mn-cliente-list').classList.remove('open');
+  if(!e.target.closest('#dm-cidade')&&!e.target.closest('#dm-cidade-list'))
+    document.getElementById('dm-cidade-list').classList.remove('open');
+});
+
+// ── INIT SELECTS ───────────────────────────────────────────────────────────
+// selects populados pelo initSelects após carregamento da API;
+
+// ── EXECUTIVOS ─────────────────────────────────────────────────────────────
+var _exNames=null;
+function getExNames(){
+  if(_exNames)return _exNames;
+  var seen={};_exNames=[];
+  GTF.executivos.forEach(function(r){var n=r['CLIENTE RAZÃO SOCIAL'];if(n&&!seen[n]){seen[n]=1;_exNames.push(n);}});
+  _exNames.sort();return _exNames;
+}
+function acExec(val){
+  var q=N(val),list=document.getElementById('ex-razao-list');
+  if(q.length<2){list.classList.remove('open');return;}
+  var m=getExNames().filter(function(n){return N(n).includes(q);}).slice(0,10);
+  if(!m.length){list.classList.remove('open');return;}
+  list.innerHTML=m.map(function(n){return '<div class="ac-item" onclick="selExRazao(\''+n.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')">'+(val?n.replace(new RegExp('('+val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>'):E(n))+'</div>';}).join('');
+  list.classList.add('open');
+}
+function selExRazao(n){document.getElementById('ex-razao').value=n;document.getElementById('ex-razao-list').classList.remove('open');searchExec();}
+
+function searchExec(){
+  var placa=N(document.getElementById('ex-placa').value.trim());
+  var cnpj=document.getElementById('ex-cnpj').value.replace(/\D/g,'');
+  var razao=N(document.getElementById('ex-razao').value.trim());
+  if(!placa&&!cnpj&&!razao)return;
+  var res=GTF.executivos.filter(function(r){
+    if(placa)return N(r.PLACA)===placa;
+    if(cnpj)return(r.CNPJ||'').replace(/\D/g,'')===cnpj;
+    if(razao)return N(r['CLIENTE RAZÃO SOCIAL']).includes(razao);
+    return false;
+  });
+  var q=document.getElementById('ex-placa').value.trim()||document.getElementById('ex-razao').value.trim()||document.getElementById('ex-cnpj').value.trim();
+  if(!res.length){noRes('ex-results');return;}
+  var h='<div class="rmeta"><span class="rcnt">'+res.length+' resultado'+(res.length>1?'s':'')+' encontrado'+(res.length>1?'s':'')+'</span><span class="rq">buscando por: <strong>"'+E(q)+'"</strong></span></div>';
+  if(placa){
+    res.forEach(function(r){h+=execCard(r,q);});
+  } else {
+    var by={};
+    res.forEach(function(r){var k=(r['CLIENTE RAZÃO SOCIAL']||'')+'|'+(r.CNPJ||'')+'|'+(r['CENTRO DE CUSTO']||'');if(!by[k])by[k]={info:r,placas:[]};by[k].placas.push(r.Placa||r.PLACA||'');});
+    Object.values(by).forEach(function(g){
+      var r=g.info;
+      h+='<div class="rcard"><div class="rgrid" style="margin-bottom:12px">';
+      h+='<div><div class="flbl">CNPJ</div><div class="fval">'+HL(r.CNPJ,q)+'</div></div>';
+      h+='<div><div class="flbl">Centro de Custo</div><div class="fval">'+E(r['CENTRO DE CUSTO'])+'</div></div>';
+      h+='<div style="grid-column:1/-1"><div class="flbl">Razão Social</div><div class="fval big">'+HL(r['CLIENTE RAZÃO SOCIAL'],q)+'</div></div>';
+      h+='</div><div class="dvr"></div><div class="grp-lbl">Executivo</div><div class="rgrid">';
+      if(r.EXECUTIVO){h+='<div><div class="flbl">Executivo</div><div class="fval">'+E(r.EXECUTIVO)+'</div>';if(r['TEL EXECUTIVO'])h+='<div class="flbl" style="margin-top:8px">📞 Tel</div><div class="fval">'+fmtTel(r['TEL EXECUTIVO'])+'</div>';h+='</div>';}
+      if(r['CONTINGÊNCIA EXECUTIVO']){h+='<div><div class="flbl">Contingência</div><div class="fval">'+E(r['CONTINGÊNCIA EXECUTIVO'])+'</div>';if(r['TEL CONTIGÊNCIA'])h+='<div class="flbl" style="margin-top:8px">📞 Tel</div><div class="fval">'+fmtTel(r['TEL CONTIGÊNCIA'])+'</div>';h+='</div>';}
+      h+='</div><div class="dvr"></div><div class="flbl">Placas vinculadas ('+g.placas.length+')</div><div class="placas-list">';
+      g.placas.forEach(function(p){h+='<span class="bplaca">'+E(p)+'</span>';});
+      h+='</div></div>';
+    });
+  }
+  document.getElementById('ex-results').innerHTML=h;
+}
+function execCard(r,q){
+  var h='<div class="rcard"><div class="rgrid" style="margin-bottom:12px">';
+  h+='<div><div class="flbl">Placa</div><div class="fval"><span class="bplaca">'+HL(r.Placa||r.PLACA||'',q)+'</span></div></div>';
+  h+='<div><div class="flbl">Segmento</div><div class="fval">'+E(r.SEGMENTO)+'</div></div>';
+  h+='<div><div class="flbl">CNPJ</div><div class="fval">'+E(r.CNPJ)+'</div></div>';
+  h+='<div><div class="flbl">Centro de Custo</div><div class="fval">'+E(r['CENTRO DE CUSTO'])+'</div></div>';
+  h+='<div style="grid-column:1/-1"><div class="flbl">Razão Social</div><div class="fval big">'+E(r['CLIENTE RAZÃO SOCIAL'])+'</div></div>';
+  h+='</div><div class="dvr"></div><div class="grp-lbl">Executivo</div><div class="rgrid">';
+  if(r.EXECUTIVO){h+='<div><div class="flbl">Executivo</div><div class="fval">'+E(r.EXECUTIVO)+'</div>';if(r['TEL EXECUTIVO'])h+='<div class="flbl" style="margin-top:8px">📞 Tel</div><div class="fval">'+fmtTel(r['TEL EXECUTIVO'])+'</div>';h+='</div>';}
+  if(r['CONTINGÊNCIA EXECUTIVO']){h+='<div><div class="flbl">Contingência</div><div class="fval">'+E(r['CONTINGÊNCIA EXECUTIVO'])+'</div>';if(r['TEL CONTIGÊNCIA'])h+='<div class="flbl" style="margin-top:8px">📞 Tel</div><div class="fval">'+fmtTel(r['TEL CONTIGÊNCIA'])+'</div>';h+='</div>';}
+  h+='</div>';
+  if(r['EXECUTIVO SUPERVIP']||r['CONTINGÊNCIA SUPERVIP']){
+    h+='<div class="dvr"></div><div class="grp-lbl">SuperVIP</div><div class="rgrid">';
+    if(r['EXECUTIVO SUPERVIP'])h+='<div><div class="flbl">Executivo SuperVIP</div><div class="fval">'+E(r['EXECUTIVO SUPERVIP'])+'</div></div>';
+    if(r['CONTINGÊNCIA SUPERVIP'])h+='<div><div class="flbl">Contingência SuperVIP</div><div class="fval">'+E(r['CONTINGÊNCIA SUPERVIP'])+'</div></div>';
+    h+='</div>';
+  }
+  h+='</div>';return h;
+}
+
+// ── MANUTENÇÃO ─────────────────────────────────────────────────────────────
+var _mnNames=null;
+function getMnNames(){
+  if(_mnNames)return _mnNames;
+  var seen={};_mnNames=[];
+  GTF.manutencao.forEach(function(r){var n=r.Cliente;if(n&&!seen[n]){seen[n]=1;_mnNames.push(n);}});
+  _mnNames.sort();return _mnNames;
+}
+function acManut(val){
+  var q=N(val),list=document.getElementById('mn-cliente-list');
+  if(q.length<2){list.classList.remove('open');return;}
+  var m=getMnNames().filter(function(n){return N(n).includes(q);}).slice(0,10);
+  if(!m.length){list.classList.remove('open');return;}
+  list.innerHTML=m.map(function(n){return '<div class="ac-item" onclick="selMnCliente(\''+n.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')">'+(val?n.replace(new RegExp('('+val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>'):E(n))+'</div>';}).join('');
+  list.classList.add('open');
+}
+function selMnCliente(n){document.getElementById('mn-cliente').value=n;document.getElementById('mn-cliente-list').classList.remove('open');searchManut();}
+
+function searchManut(){
+  var placa=N(document.getElementById('mn-placa').value.trim());
+  var cnpj=document.getElementById('mn-cnpj').value.replace(/\D/g,'');
+  var cliente=N(document.getElementById('mn-cliente').value.trim());
+  if(!placa&&!cnpj&&!cliente)return;
+  var res=GTF.manutencao.filter(function(r){
+    if(placa)return N(r.Placa||r.PLACA||'')===placa;
+    if(cnpj)return(r.CNPJ||'').replace(/\D/g,'')===cnpj;
+    if(cliente)return N(r.Cliente||'').includes(cliente);
+    return false;
+  });
+  var q=document.getElementById('mn-placa').value.trim()||document.getElementById('mn-cliente').value.trim()||document.getElementById('mn-cnpj').value.trim();
+  if(!res.length){noRes('mn-results');return;}
+  var h='<div class="rmeta"><span class="rcnt">'+res.length+' resultado'+(res.length>1?'s':'')+' encontrado'+(res.length>1?'s':'')+'</span><span class="rq">buscando por: <strong>"'+E(q)+'"</strong></span></div>';
+  if(placa){
+    res.forEach(function(r){h+=manutCard(r,q);});
+  } else {
+    var by={};
+    res.forEach(function(r){var k=(r.Cliente||'')+'|'+(r.CNPJ||'');if(!by[k])by[k]={info:r,placas:[]};by[k].placas.push(r.Placa||r.PLACA||'');});
+    Object.values(by).forEach(function(g){
+      var r=g.info;
+      h+='<div class="rcard"><div class="rgrid" style="margin-bottom:12px">';
+      h+='<div><div class="flbl">Cliente</div><div class="fval big">'+HL(r.Cliente,q)+'</div></div>';
+      h+='<div><div class="flbl">CNPJ</div><div class="fval">'+HL(r.CNPJ,q)+'</div></div>';
+      h+='</div><div class="dvr"></div>';
+      h+=manutPessoas(r);
+      h+='<div class="dvr"></div><div class="flbl">Placas vinculadas ('+g.placas.length+')</div><div class="placas-list">';
+      g.placas.forEach(function(p){h+='<span class="bplaca">'+E(p)+'</span>';});
+      h+='</div></div>';
+    });
+  }
+  document.getElementById('mn-results').innerHTML=h;
+}
+function manutCard(r,q){
+  var h='<div class="rcard"><div class="rgrid" style="margin-bottom:12px">';
+  h+='<div><div class="flbl">Placa</div><div class="fval"><span class="bplaca">'+HL(r.Placa||r.PLACA||'',q)+'</span></div></div>';
+  h+='<div><div class="flbl">Cliente</div><div class="fval big">'+E(r.Cliente)+'</div></div>';
+  h+='<div><div class="flbl">CNPJ</div><div class="fval">'+E(r.CNPJ)+'</div></div>';
+  h+='</div><div class="dvr"></div>';
+  h+=manutPessoas(r);
+  h+='</div>';return h;
+}
+function manutPessoas(r){
+  var h='<div class="grp-lbl">Manutenção</div><div class="rgrid">';
+  if(r['Consultor Manutenção'])h+='<div><div class="flbl">Consultor</div><div class="fval">'+E(r['Consultor Manutenção'])+'</div></div>';
+  if(r['Líder Manutenção'])h+='<div><div class="flbl">Líder</div><div class="fval">'+E(r['Líder Manutenção'])+'</div></div>';
+  h+='</div><div class="dvr"></div><div class="grp-lbl">Sinistro</div><div class="rgrid">';
+  if(r['Consultor Sinistro'])h+='<div><div class="flbl">Consultor</div><div class="fval">'+E(r['Consultor Sinistro'])+'</div></div>';
+  if(r['Lider Sinistro'])h+='<div><div class="flbl">Líder</div><div class="fval">'+E(r['Lider Sinistro'])+'</div></div>';
+  h+='</div>';
+  if(r['Assistente monitoramento']||r['Lider monitoramento']){
+    h+='<div class="dvr"></div><div class="grp-lbl">Monitoramento</div><div class="rgrid">';
+    if(r['Assistente monitoramento'])h+='<div><div class="flbl">Assistente</div><div class="fval">'+E(r['Assistente monitoramento'])+'</div></div>';
+    if(r['Lider monitoramento'])h+='<div><div class="flbl">Líder</div><div class="fval">'+E(r['Lider monitoramento'])+'</div></div>';
+    h+='</div>';
+  }
+  return h;
+}
+
+// ── CONCESSIONÁRIA ─────────────────────────────────────────────────────────
+function updateCidades(){
+  var uf=document.getElementById('co-uf').value;
+  var cidades=[...new Set(GTF.concessionaria.filter(function(r){return !uf||r.UF===uf;}).map(function(r){return r.CIDADE;}))].sort();
+  var sel=document.getElementById('co-cidade');
+  sel.innerHTML='<option value="">Todas as cidades</option>';
+  cidades.forEach(function(c){sel.innerHTML+='<option value="'+E(c)+'">'+E(c)+'</option>';});
+}
+function updateMarcas(){
+  var uf=document.getElementById('co-uf').value;
+  var cidade=document.getElementById('co-cidade').value;
+  var marcas=[...new Set(GTF.concessionaria.filter(function(r){return(!uf||r.UF===uf)&&(!cidade||r.CIDADE===cidade);}).map(function(r){return r['MARCAS / MONTADORA'];}))].filter(Boolean).sort();
+  var sel=document.getElementById('co-marca');
+  sel.innerHTML='<option value="">Todas as marcas</option>';
+  marcas.forEach(function(m){sel.innerHTML+='<option value="'+E(m)+'">'+E(m)+'</option>';});
+}
+function searchConc(){
+  var uf=document.getElementById('co-uf').value;
+  var cidade=document.getElementById('co-cidade').value;
+  var marca=document.getElementById('co-marca').value;
+  if(!uf&&!cidade&&!marca){noRes('co-results');return;}
+  var res=GTF.concessionaria.filter(function(r){return(!uf||r.UF===uf)&&(!cidade||r.CIDADE===cidade)&&(!marca||r['MARCAS / MONTADORA']===marca);});
+  if(!res.length){noRes('co-results');return;}
+  var h='<div class="rmeta"><span class="rcnt">'+res.length+' concessionária'+(res.length>1?'s':'')+' encontrada'+(res.length>1?'s':'')+'</span></div>';
+  res.forEach(function(r){h+='<div class="rcard"><div class="rgrid"><div style="grid-column:1/-1"><div class="flbl">Nome</div><div class="fval big">'+E(r.NOME)+'</div></div><div><div class="flbl">CNPJ</div><div class="fval">'+E(r.CNPJ)+'</div></div><div><div class="flbl">UF</div><div class="fval"><span class="bplaca">'+E(r.UF)+'</span></div></div><div><div class="flbl">Cidade</div><div class="fval">'+E(r.CIDADE)+'</div></div><div><div class="flbl">Marcas</div><div class="fval">'+E(r['MARCAS / MONTADORA'])+'</div></div></div></div>';});
+  document.getElementById('co-results').innerHTML=h;
+}
+
+// ── CONTATOS ───────────────────────────────────────────────────────────────
+function searchContatos(){
+  var q=N(document.getElementById('ct-area').value.trim());
+  var res=GTF.contatos.filter(function(r){return !q||N(r['ÁREA']).includes(q);});
+  if(!res.length){noRes('ct-results');return;}
+  var raw=document.getElementById('ct-area').value.trim();
+  var h='<div class="rmeta"><span class="rcnt">'+res.length+' resultado'+(res.length>1?'s':'')+'</span></div>';
+  res.forEach(function(r){h+='<div class="rcard"><div class="rgrid"><div><div class="flbl">Área</div><div class="fval big">'+HL(r['ÁREA'],raw)+'</div></div><div><div class="flbl">Nome do Contato</div><div class="fval">'+E(r['NOME DO CONTATO'])+'</div></div><div><div class="flbl">Telefone</div><div class="fval">'+fmtTel(r.TELEFONE)+'</div></div><div><div class="flbl">WhatsApp</div><div class="fval">'+fmtTel(r.WHATSAPP)+'</div></div><div><div class="flbl">E-mail</div><div class="fval">'+E(r['E-MAIL'])+'</div></div></div></div>';});
+  document.getElementById('ct-results').innerHTML=h;
+}
+
+// ── SCRIPTS ────────────────────────────────────────────────────────────────
+function updateScripts(){
+  var tipo=document.getElementById('sc-tipo').value;
+  var sols=GTF.scripts.filter(function(r){return !tipo||r['Padrão ou Script']===tipo;}).map(function(r){return r.SOLICITAÇÃO;});
+  var sel=document.getElementById('sc-sol');
+  sel.innerHTML='<option value="">Selecione a solicitação</option>';
+  sols.forEach(function(s){sel.innerHTML+='<option value="'+E(s)+'">'+E(s)+'</option>';});
+  // Resetar UF ao trocar tipo
+  document.getElementById('sc-uf').style.display='none';
+  document.getElementById('sc-uf').innerHTML='<option value="">Selecione a UF</option>';
+}
+function updateScUF(){
+  var sol=document.getElementById('sc-sol').value;
+  var selUF=document.getElementById('sc-uf');
+  // Só mostra UF se for Pit Stop
+  if(sol==='Script - Oferta de Pit Stop Movida'){
+    var ufs=[...new Set((GTF.pit_stop||[]).map(function(r){return r.UF||r.uf||'';}))].filter(Boolean).sort();
+    selUF.innerHTML='<option value="">Selecione a UF</option>';
+    ufs.forEach(function(u){selUF.innerHTML+='<option value="'+E(u)+'">'+E(u)+'</option>';});
+    selUF.style.display='';
+  } else {
+    selUF.style.display='none';
+    selUF.innerHTML='<option value="">Selecione a UF</option>';
+  }
+}
+window._sc_data=[];
+function searchScript(){
+  var sol=document.getElementById('sc-sol').value;
+  if(!sol){noRes('sc-results');return;}
+
+  // Pit Stop — exibe lojas da UF selecionada + resposta do script
+  if(sol==='Script - Oferta de Pit Stop Movida'){
+    var uf=document.getElementById('sc-uf').value;
+    if(!uf){
+      document.getElementById('sc-results').innerHTML='<div class="ecrd"><div class="eico">📍</div><div class="etitle">Selecione a UF</div><div class="esub">Escolha o estado para ver as unidades Pit Stop disponíveis</div></div>';
+      return;
+    }
+    var lojas=(GTF.pit_stop||[]).filter(function(r){return (r.UF||r.uf||'')=== uf;});
+    var resScript=GTF.scripts.filter(function(r){return r.SOLICITAÇÃO===sol;});
+    var h='<div class="rmeta"><span class="rcnt">'+lojas.length+' unidade'+(lojas.length!==1?'s':'')+' Pit Stop em '+E(uf)+'</span></div>';
+    // Resposta do script com botão copiar
+    if(resScript.length){
+      window._sc_data=resScript;
+      var bid='scb0';
+      h+='<div class="rcard">';
+      h+='<div class="flbl">Tipo</div><div class="fval" style="margin-bottom:6px">'+E(resScript[0]['Padrão ou Script'])+'</div>';
+      h+='<div class="flbl">Solicitação</div><div class="fval big" style="margin-bottom:10px">'+E(resScript[0].SOLICITAÇÃO)+'</div>';
+      h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div class="flbl" style="margin:0">Resposta</div>';
+      h+='<button id="'+bid+'" onclick="copiarScript(\''+bid+'\',0)" style="background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:7px;padding:4px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">📋 Copiar</button></div>';
+      h+='<div class="tblock">'+E(resScript[0].Resposta)+'</div></div>';
+    }
+    // Lojas Pit Stop
+    if(!lojas.length){
+      h+='<div class="ecrd"><div class="eico">📍</div><div class="etitle">Nenhuma unidade encontrada para '+E(uf)+'</div></div>';
+    } else {
+      lojas.forEach(function(r){
+        var nome  = r['Nome do fornecedor']||r['nome do fornecedor']||'';
+        var end   = r['Endereço']||r['endereço']||r['Endereco']||'';
+        var bairro= r['Bairro']||r['bairro']||'';
+        var cidade= r['Cidade']||r['cidade']||'';
+        var ref   = r['Referência']||r['referência']||r['Referencia']||'';
+        var hor   = r['Horário de funcionamento']||r['horário de funcionamento']||r['Horario de funcionamento']||'';
+        h+='<div class="rcard">';
+        h+='<div class="rgrid" style="margin-bottom:12px">';
+        h+='<div style="grid-column:1/-1"><div class="flbl">Nome</div><div class="fval big">'+E(nome)+'</div></div>';
+        h+='<div><div class="flbl">Cidade / Bairro</div><div class="fval">'+E(cidade)+(bairro?' — '+E(bairro):'')+'</div></div>';
+        h+='<div><div class="flbl">UF</div><div class="fval"><span class="bplaca">'+E(uf)+'</span></div></div>';
+        if(ref) h+='<div style="grid-column:1/-1"><div class="flbl">Referência</div><div class="fval">'+E(ref)+'</div></div>';
+        h+='<div style="grid-column:1/-1"><div class="flbl">Endereço</div><div class="fval">'+E(end)+'</div></div>';
+        h+='<div style="grid-column:1/-1"><div class="flbl">Horário de Funcionamento</div><div class="fval">'+E(hor)+'</div></div>';
+        h+='</div></div>';
+      });
+    }
+    document.getElementById('sc-results').innerHTML=h;
+    return;
+  }
+
+  // Demais scripts — comportamento normal
+  var res=GTF.scripts.filter(function(r){return r.SOLICITAÇÃO===sol;});
+  if(!res.length){noRes('sc-results');return;}
+  window._sc_data=res;
+  var h='';
+  res.forEach(function(r,i){
+    var bid='scb'+i;
+    var resposta = r.Resposta||'';
+    h+='<div class="rcard">';
+    h+='<div class="flbl">Tipo</div><div class="fval" style="margin-bottom:6px">'+E(r['Padrão ou Script'])+'</div>';
+    h+='<div class="flbl">Solicitação</div><div class="fval big" style="margin-bottom:10px">'+E(r.SOLICITAÇÃO)+'</div>';
+    h+='<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px"><div class="flbl" style="margin:0">Resposta</div>';
+    h+='<button id="'+bid+'" onclick="copiarScript(\''+bid+'\','+i+')" style="background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:7px;padding:4px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">📋 Copiar</button></div>';
+
+    // Alfabeto fonético — 3 colunas com letra em destaque
+    if(sol==='Alfabeto fonético'){
+      var itens = resposta.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+      var col = Math.ceil(itens.length/3);
+      h+='<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px 16px;padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--or)">';
+      itens.forEach(function(linha){
+        // Separa letra da palavra: "A - Alpha"
+        var m = linha.match(/^([A-Z])\s*[-–]\s*(.+)$/);
+        if(m){
+          h+='<div style="display:flex;align-items:center;gap:8px;padding:5px 0">';
+          h+='<span style="font-size:18px;font-weight:800;color:var(--or);min-width:24px">'+E(m[1])+'</span>';
+          h+='<span style="font-size:13px;color:var(--tx2)">'+E(m[2].trim())+'</span>';
+          h+='</div>';
+        } else {
+          h+='<div style="padding:5px 0;font-size:13px;color:var(--tx2)">'+E(linha)+'</div>';
+        }
+      });
+      h+='</div>';
+
+    // Código de atividade — sigla em destaque
+    } else if(sol==='Cód. de ativididade'){
+      var linhas = resposta.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+      h+='<div style="display:flex;flex-direction:column;gap:4px;padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--or)">';
+      linhas.forEach(function(linha){
+        // Separa sigla do resto: "MP - PREVENTIVA..."
+        var m = linha.match(/^([A-Z]+)\s*[-–]\s*(.+)$/);
+        if(m){
+          h+='<div style="display:flex;align-items:flex-start;gap:10px;padding:7px 0;border-bottom:1px solid var(--bdr2)">';
+          h+='<span style="font-size:14px;font-weight:800;color:var(--or);min-width:36px;flex-shrink:0">'+E(m[1])+'</span>';
+          h+='<span style="font-size:13px;color:var(--tx);line-height:1.5">'+E(m[2].trim())+'</span>';
+          h+='</div>';
+        } else {
+          h+='<div style="padding:7px 0;font-size:13px;color:var(--tx2);border-bottom:1px solid var(--bdr2)">'+E(linha)+'</div>';
+        }
+      });
+      h+='</div>';
+
+    // Status GEO — texto antes de ":" em destaque
+    } else if(sol==='Status de OS GEO'){
+      var linhas = resposta.split('\n').map(function(l){return l.trim();}).filter(Boolean);
+      h+='<div style="display:flex;flex-direction:column;gap:4px;padding:12px;background:var(--bg3);border-radius:8px;border-left:3px solid var(--or)">';
+      linhas.forEach(function(linha){
+        var idx = linha.indexOf(':');
+        if(idx > -1){
+          var status = linha.substring(0, idx).trim();
+          var desc   = linha.substring(idx+1).trim();
+          h+='<div style="padding:8px 0;border-bottom:1px solid var(--bdr2)">';
+          h+='<div style="font-size:14px;font-weight:700;color:var(--orl);margin-bottom:3px">'+E(status)+'</div>';
+          h+='<div style="font-size:13px;color:var(--tx2);line-height:1.5">'+E(desc)+'</div>';
+          h+='</div>';
+        } else {
+          h+='<div style="padding:8px 0;font-size:13px;color:var(--tx2)">'+E(linha)+'</div>';
+        }
+      });
+      h+='</div>';
+
+    // Demais — tblock padrão
+    } else {
+      h+='<div class="tblock">'+E(resposta)+'</div>';
+    }
+
+    h+='</div>';
+  });
+  document.getElementById('sc-results').innerHTML=h;
+}
+function copiarScript(bid,i){
+  var txt=window._sc_data[i]?window._sc_data[i].Resposta:'';
+  navigator.clipboard.writeText(txt).then(function(){showCopied(bid,'✓ Copiado!','#4ade80');}).catch(function(){
+    var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showCopied(bid,'✓ Copiado!','#4ade80');
+  });
+}
+function showCopied(id,txt,col){
+  var b=document.getElementById(id);if(!b)return;
+  var ot=b.textContent;b.textContent=txt;b.style.color=col;b.style.borderColor=col;
+  setTimeout(function(){b.textContent=ot;b.style.color='';b.style.borderColor='';},2000);
+}
+
+// ── REGIONAIS ─────────────────────────────────────────────────────────────
+var _rgEmails=[];
+function cpRgEmail(i){
+  navigator.clipboard.writeText(_rgEmails[i]||'');
+}
+function searchRegional(){
+  var estado=document.getElementById('rg-estado').value;
+  if(!estado) return;
+  var res=GTF.regionais.filter(function(r){ return r.UF===estado; });
+  if(!res.length){noRes('rg-results');return;}
+  _rgEmails=res.map(function(r){return r.Email;});
+  var h='<div class="rmeta"><span class="rcnt">'+res.length+' resultado'+(res.length>1?'s':'')+' para '+E(estado)+'</span></div>';
+  res.forEach(function(r,i){
+    h+='<div class="rcard">';
+    h+='<div style="display:flex;align-items:flex-start;gap:24px;flex-wrap:wrap;margin-bottom:14px">';
+    h+='<div style="flex:1;min-width:200px"><div class="flbl">Nome</div><div class="fval big">'+E(r.Nome)+'</div></div>';
+    h+='<div style="flex:2;min-width:280px"><div class="flbl">E-mail</div>';
+    h+='<div style="display:flex;align-items:center;gap:10px">';
+    h+='<span class="fval">'+E(r.Email)+'</span>';
+    h+='<button onclick="cpRgEmail('+i+')" style="flex-shrink:0;background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:7px;padding:4px 11px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit">📋 Copiar</button>';
+    h+='</div></div>';
+    h+='</div>';
+    h+='<div class="flbl" style="margin-bottom:8px">Atividades para '+E(estado)+'</div>';
+    r.Atividades.forEach(function(a,idx){
+      h+='<div style="display:flex;gap:10px;padding:7px 0;border-bottom:1px solid var(--bdr2)">';
+      h+='<span style="min-width:22px;font-size:12px;font-weight:700;color:var(--or)">'+(idx+1)+'.</span>';
+      h+='<span style="font-size:13px;color:var(--tx2)">'+E(a)+'</span></div>';
+    });
+    h+='</div>';
+  });
+  document.getElementById('rg-results').innerHTML=h;
+}
+
+// ── WORKFLOW ───────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded',function(){
+  var subs=[...new Set(GTF.workflow.map(function(r){return r['SUBÁREA']||''}))].filter(Boolean).sort();
+  subs.forEach(function(s){document.getElementById('wf-subarea').innerHTML+='<option value="'+E(s)+'">'+E(s)+'</option>';});
+  updateMotivos();
+});
+function updateMotivos(){
+  var sub=document.getElementById('wf-subarea').value;
+  var mots=[...new Set(GTF.workflow.filter(function(r){return !sub||r['SUBÁREA']===sub;}).map(function(r){return r.MOTIVO;}))].sort();
+  var sel=document.getElementById('wf-motivo');
+  sel.innerHTML='<option value="">Todos os motivos</option>';
+  mots.forEach(function(m){sel.innerHTML+='<option value="'+E(m)+'">'+E(m)+'</option>';});
+}
+function searchWorkflow(){
+  var sub=document.getElementById('wf-subarea').value;
+  var mot=document.getElementById('wf-motivo').value;
+  var res=GTF.workflow.filter(function(r){return(!sub||r['SUBÁREA']===sub)&&(!mot||r.MOTIVO===mot);});
+  if(!res.length){noRes('wf-results');return;}
+  var h='<div class="rmeta"><span class="rcnt">'+res.length+' resultado'+(res.length>1?'s':'')+'</span></div>';
+  res.forEach(function(r){
+    h+='<div class="rcard"><div class="rgrid" style="margin-bottom:12px"><div><div class="flbl">Área</div><div class="fval">'+E(r['ÁREA'])+'</div></div><div><div class="flbl">Subárea</div><div class="fval big">'+E(r['SUBÁREA'])+'</div></div><div><div class="flbl">Motivo</div><div class="fval">'+E(r.MOTIVO)+'</div></div><div><div class="flbl">Prazo de Retorno</div><div class="fval">'+E(r['PRAZO DE RETORNO'])+'</div></div><div><div class="flbl">Responsável</div><div class="fval">'+E(r['RESPONSÁVEL'])+'</div></div></div>';
+    h+='<div class="flbl">Utilização</div><div class="tblock">'+E(r['UTILIZAÇÃO'])+'</div></div>';
+  });
+  document.getElementById('wf-results').innerHTML=h;
+}
+
+// ── DESMOBILIZAÇÃO ─────────────────────────────────────────────────────────
+function updateDmCidades(){
+  document.getElementById('dm-cidade').value='';
+  document.getElementById('dm-cidade-list').classList.remove('open');
+}
+function acDesm(val){
+  var uf=document.getElementById('dm-uf').value;
+  var q=N(val),list=document.getElementById('dm-cidade-list');
+  if(!q){list.classList.remove('open');return;}
+  var cidades=[...new Set(GTF.desmobilizacao.filter(function(r){return(!uf||r.UF===uf)&&N(r.Cidade).includes(q);}).map(function(r){return r.Cidade;}))].sort().slice(0,12);
+  if(!cidades.length){list.classList.remove('open');return;}
+  list.innerHTML=cidades.map(function(c){return '<div class="ac-item" onclick="selDmCidade(\''+c.replace(/\\/g,'\\\\').replace(/'/g,"\\'")+'\')">'+c.replace(new RegExp('('+val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>')+'</div>';}).join('');
+  list.classList.add('open');
+}
+function selDmCidade(c){document.getElementById('dm-cidade').value=c;document.getElementById('dm-cidade-list').classList.remove('open');}
+function searchDesm(){
+  var uf=document.getElementById('dm-uf').value;
+  var cidade=document.getElementById('dm-cidade').value.trim();
+  if(!uf&&!cidade){noRes('dm-results');return;}
+  var res=GTF.desmobilizacao.filter(function(r){return(!uf||r.UF===uf)&&(!cidade||N(r.Cidade).includes(N(cidade)));});
+  if(!res.length){noRes('dm-results');return;}
+  var h='<div class="rmeta"><span class="rcnt">'+res.length+' resultado'+(res.length>1?'s':'')+'</span></div>';
+  res.forEach(function(r){h+='<div class="rcard"><div class="rgrid"><div><div class="flbl">Nome</div><div class="fval big">'+E(r.Nome)+'</div></div><div><div class="flbl">CNPJ</div><div class="fval">'+E(r.CNPJ)+'</div></div><div><div class="flbl">UF</div><div class="fval"><span class="bplaca">'+E(r.UF)+'</span></div></div><div><div class="flbl">Cidade</div><div class="fval">'+E(r.Cidade)+'</div></div></div></div>';});
+  document.getElementById('dm-results').innerHTML=h;
+}
+
+// ── CRLV ───────────────────────────────────────────────────────────────────
+function searchCrlv(){
+  var uf=document.getElementById('cr-uf').value;
+  var final=document.getElementById('cr-final').value;
+  if(!uf||!final){
+    document.getElementById('cr-results').innerHTML='<div class="ecrd"><div class="eico">📄</div><div class="etitle">Selecione o estado e o final da placa</div></div>';
+    return;
+  }
+  var res=GTF.crlv.filter(function(r){return r.Estado===uf&&String(r.Final)===String(final);});
+  if(!res.length){noRes('cr-results');return;}
+  var h='<div class="rmeta"><span class="rcnt">'+res.length+' resultado'+(res.length>1?'s':'')+'</span></div>';
+  res.forEach(function(r){
+    h+='<div class="rcard"><div class="rgrid">';
+    h+='<div><div class="flbl">Estado</div><div class="fval big"><span class="bplaca">'+E(r.Estado)+'</span></div></div>';
+    h+='<div><div class="flbl">Final da Placa</div><div class="fval big" style="font-size:22px;color:var(--or);font-weight:800">'+E(r.Final)+'</div></div>';
+    h+='<div><div class="flbl">Data de Renovação</div><div class="fval big" style="color:var(--orl)">'+E(r.Vencimento)+'</div></div>';
+    h+='</div></div>';
+  });
+  document.getElementById('cr-results').innerHTML=h;
+}
+
+// ── UPGRADE ────────────────────────────────────────────────────────────────
+function searchUpgrade(){
+  var cat=document.getElementById('up-cat').value;
+  if(!cat){noRes('up-results');return;}
+  var res=GTF.upgrade.filter(function(r){return r.CATEGORIA===cat;});
+  if(!res.length){noRes('up-results');return;}
+  var h='';
+  res.forEach(function(r){h+='<div class="rcard"><div class="rgrid"><div><div class="flbl">Categoria</div><div class="fval big"><span class="bplaca">'+E(r.CATEGORIA)+'</span></div></div><div><div class="flbl">Opção 1</div><div class="fval">'+E(r['OPÇÃO 1'])+'</div></div><div><div class="flbl">Opção 2</div><div class="fval">'+E(r['OPÇÃO 2'])+'</div></div><div><div class="flbl">Opção 3</div><div class="fval">'+E(r['OPÇÃO 3'])+'</div></div><div><div class="flbl">Opção 4</div><div class="fval">'+E(r['OPÇÃO 4'])+'</div></div></div></div>';});
+  document.getElementById('up-results').innerHTML=h;
+}
+
+// ── SUBLOCAÇÃO ─────────────────────────────────────────────────────────────
+function renderSublocacao(){
+  var h='';
+  GTF.sublocacao.forEach(function(r,i){
+    h+='<div class="acc-item" id="acc'+i+'"><div class="acc-hdr" onclick="toggleAcc('+i+')"><div class="acc-hdr-txt">'+E(r.Pergunta)+'</div><span class="acc-arrow">›</span></div><div class="acc-body">'+E(r['Orientação']||r.Orientacao||'')+'</div></div>';
+  });
+  document.getElementById('sub-results').innerHTML=h;
+}
+function toggleAcc(i){document.getElementById('acc'+i).classList.toggle('open');}
+
+// ── VEÍCULO RESERVA ────────────────────────────────────────────────────────
+function renderVeiculoReserva(){
+  var h='';
+  GTF.veiculo_reserva.forEach(function(grupo){
+    h+='<div class="vr-grupo"><div class="vr-grupo-titulo">'+E(grupo.label)+'</div>';
+    grupo.passos.forEach(function(p){
+      h+='<div class="vr-step"><div class="vr-num">'+p.etapa+'</div><div><div class="vr-passo">'+E(p.passo)+'</div>'+(p.orientacao?'<div class="vr-orient">'+E(p.orientacao)+'</div>':'')+'</div></div>';
+    });
+    h+='</div>';
+  });
+  document.getElementById('vr-content').innerHTML=h;
+}
+
+// ── CONTROLADOR ────────────────────────────────────────────────────────────
+function renderControlador(){
+  if(document.getElementById('ctl-results').innerHTML.trim())return;
+  var h='<div class="tbl-filter-bar"><input class="tbl-finp" id="ctl-filter" placeholder="Filtrar por empresa ou centro de custo..." oninput="filterCtl()"/></div>';
+  h+='<div class="tbl-cnt" id="ctl-cnt">'+GTF.controlador.length+' empresas</div>';
+  h+='<div class="tbl-wrap"><table><thead><tr><th>Centro de Custo</th><th>Empresa</th><th>Orientação</th></tr></thead><tbody id="ctl-tbody">';
+  GTF.controlador.forEach(function(r){h+='<tr><td>'+E(r['CENTRO DE CUSTO'])+'</td><td style="font-weight:600">'+E(r.EMPRESA)+'</td><td class="tdl">'+E(r['ORIENTAÇÃO'])+'</td></tr>';});
+  h+='</tbody></table></div>';
+  document.getElementById('ctl-results').innerHTML=h;
+}
+function filterCtl(){
+  var q=N(document.getElementById('ctl-filter').value);
+  var rows=document.querySelectorAll('#ctl-tbody tr'),vis=0;
+  rows.forEach(function(tr){var s=!q||N(tr.textContent).includes(q);tr.classList.toggle('hr',!s);if(s)vis++;});
+  document.getElementById('ctl-cnt').textContent=vis+' de '+rows.length+' empresas'+(q?' · "'+q+'"':'');
+}
+
+// ── PESQUISA NPS ───────────────────────────────────────────────────────────
+function gerarLink(){
+  var chamado=document.getElementById('gl-chamado').value.trim();
+  var placa=document.getElementById('gl-placa').value.trim();
+  if(!chamado||!placa){alert('Preencha o chamado e a placa.');return;}
+  var url='https://jotform.com/230176099154660?atendimentoid='+encodeURIComponent(chamado)+'&placa='+encodeURIComponent(placa);
+  document.getElementById('gl-empty').style.display='none';
+  var lista=document.getElementById('gl-links-list');
+  var iid='gli'+Date.now();
+  var d=document.createElement('div');
+  d.className='rcard';d.id=iid;d.style.borderLeftColor='var(--or)';
+  d.innerHTML='<div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:10px">'+
+    '<div><div class="flbl" style="margin-bottom:3px">Chamado: <span style="color:var(--tx)">'+E(chamado)+'</span> · Placa: <span style="color:var(--orl);font-family:monospace">'+E(placa)+'</span></div></div>'+
+    '<button onclick="this.closest(\'.rcard\').remove();if(!document.getElementById(\'gl-links-list\').children.length)document.getElementById(\'gl-empty\').style.display=\'\';" style="background:transparent;border:none;color:var(--tx3);cursor:pointer;font-size:18px">✕</button>'+
+    '</div>'+
+    '<div style="font-size:12px;color:var(--tx2);word-break:break-all;background:var(--bg3);border-radius:7px;padding:10px 12px;margin-bottom:12px;border:1px solid var(--bdr)">'+E(url)+'</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">'+
+    '<a href="'+E(url)+'" target="_blank" style="display:inline-flex;align-items:center;gap:6px;background:var(--or);color:#fff;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:700;text-decoration:none">↗ Abrir Link</a>'+
+    '<button onclick="cpLink(\''+iid+'\')" style="display:inline-flex;align-items:center;gap:6px;background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit" id="cpb'+iid+'">📋 Copiar Link</button>'+
+    '<span id="cpok'+iid+'" style="display:none;font-size:12px;color:#4ade80;font-weight:600">✓ Copiado!</span>'+
+    '</div>';
+  lista.insertBefore(d,lista.firstChild);
+  document.getElementById('gl-chamado').value='';
+  document.getElementById('gl-placa').value='';
+  document.getElementById('gl-chamado').focus();
+}
+function cpLink(iid){
+  var url=document.getElementById(iid).querySelector('a').href;
+  navigator.clipboard.writeText(url).then(function(){showCpOk(iid);}).catch(function(){
+    var ta=document.createElement('textarea');ta.value=url;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);showCpOk(iid);
+  });
+}
+function showCpOk(iid){
+  var el=document.getElementById('cpok'+iid);if(!el)return;
+  el.style.display='inline';setTimeout(function(){el.style.display='none';},2000);
+}
+
+// ── VOUCHER RESERVA ────────────────────────────────────────────────────────
+var TEMPLATE_VOUCHER = [
+  'Olá! Tudo bem?',
+  '',
+  'Temos uma ótima notícia para você: sua solicitação de Veículo Reserva foi aprovada!',
+  '',
+  'Você já pode se programar para fazer a retirada conforme as informações abaixo:',
+  '',
+  'Reserva (Voucher): XXXX1',
+  'Local de retirada: XXXX2',
+  'Endereço: XXXX3',
+  'Data de retirada: XXXX4 (a retirada pode ser feita até uma hora antes do horário agendado ou uma hora depois)',
+  'Data de devolução: XXXX5',
+  'Grupo: XXXX6',
+  '',
+  'Importante saber:',
+  '',
+  'Na retirada:',
+  'Apresente sua CNH válida.',
+  'Se atente ao horário de funcionamento da loja escolhida.',
+  'A reserva é sem custo, mas caso haja despesas extras (como multas, avarias, combustível ou uso do Sem Parar), os valores serão repassados.',
+  '',
+  'Na devolução:',
+  'O veículo reserva deve ser devolvido em até 24h após o efetivo estar pronto, no mesmo local da retirada.',
+  '',
+  'Se o efetivo ainda não estiver pronto até a data prevista, você poderá continuar com o veículo reserva, respeitando o saldo de diárias contratado pela sua empresa, caso contrário deve entrar em contato com a nossa central e solicitar análise para prorrogação da data para devolução.',
+  '',
+  'Se precisar de qualquer ajuda ou tiver dúvidas, estamos à disposição pelo 0800 722 2212 (também é WhatsApp!).',
+  '',
+  'Atenciosamente,',
+  'Equipe Movida Frotas'
+].join('\n');
+
+function gerarVoucher(){
+  var voucher   = document.getElementById('vc-voucher').value.trim();
+  var loja      = document.getElementById('vc-loja').value.trim();
+  var endereco  = document.getElementById('vc-endereco').value.trim();
+  var retirada  = document.getElementById('vc-retirada').value.trim();
+  var devolucao = document.getElementById('vc-devolucao').value.trim();
+  var grupo     = document.getElementById('vc-grupo').value.trim();
+
+  if(!voucher||!loja||!endereco||!retirada||!devolucao||!grupo){
+    alert('Preencha todos os campos antes de gerar o voucher.');
+    return;
+  }
+
+  var texto = TEMPLATE_VOUCHER
+    .replace('XXXX1', voucher)
+    .replace('XXXX2', loja)
+    .replace('XXXX3', endereco)
+    .replace('XXXX4', retirada)
+    .replace('XXXX5', devolucao)
+    .replace('XXXX6', grupo);
+
+  document.getElementById('vc-texto').textContent = texto;
+  document.getElementById('vc-result').style.display = 'block';
+  document.getElementById('vc-result').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function copiarVoucher(){
+  var txt = document.getElementById('vc-texto').textContent;
+  navigator.clipboard.writeText(txt).then(function(){
+    mostrarToast('Voucher copiado! ✓');
+  }).catch(function(){
+    var ta=document.createElement('textarea');ta.value=txt;
+    document.body.appendChild(ta);ta.select();
+    document.execCommand('copy');document.body.removeChild(ta);
+    mostrarToast('Voucher copiado! ✓');
+  });
+}
+
+function limparVoucher(){
+  ['vc-voucher','vc-loja','vc-endereco','vc-retirada','vc-devolucao','vc-grupo'].forEach(function(id){
+    document.getElementById(id).value='';
+  });
+  document.getElementById('vc-result').style.display='none';
+}
+
+// ── PIT STOP ───────────────────────────────────────────────────────────────
+var _pitScriptTxt = 'Para agilizar sua manutenção, estamos priorizando os agendamentos na rede própria de oficinas Movida.\n\nNossas unidades oferecem aprovação mais rápida, serviço de excelente qualidade, maior conforto e, dependendo do tipo de serviço, a manutenção pode ser concluída em até 1 hora, além disso todas as oficinas ficam localizadas dentro de shoppings ou supermercados para também facilitar o acesso.\n\nDevido a lotação de nossos fornecedores estamos agendando apenas para daqui a 2 dias, porém devido a eficiência do serviço da nossa rede posso agendar para você ainda hoje se quiser.\n\nEu vi aqui que na sua cidade temos oficinas Movida, vou te passar o endereço e aí você me diz se ficar próximo para você.';
+var _pitUFsel = '';
+var _pitCidadeSel = '';
+
+// Inicializar quando entrar na página
+var _pitInited = false;
+function initPitStop(){
+  if(_pitInited) return;
+  _pitInited = true;
+  // Script
+  document.getElementById('pit-script-texto').textContent = _pitScriptTxt;
+  // UFs
+  var ufs = [...new Set((GTF.pit_stop||[]).map(function(r){return r.UF||'';}).filter(Boolean))].sort();
+  var cont = document.getElementById('pit-ufs');
+  cont.innerHTML = '';
+  ufs.forEach(function(uf){
+    var btn = document.createElement('button');
+    btn.className = 'pit-uf-btn';
+    btn.textContent = uf;
+    btn.onclick = function(){ pitSelecionaUF(uf, btn); };
+    cont.appendChild(btn);
+  });
+  // Partes — carregadas via autocomplete, sem select fixo
+}
+
+function pitTab(tab){
+  ['script','info','servico'].forEach(function(t){
+    document.getElementById('pit-'+t).style.display = t===tab ? '' : 'none';
+    var btn = document.getElementById('ptab-'+t);
+    btn.classList.toggle('ptab-active', t===tab);
+  });
+  if(tab==='script' || tab==='info' || tab==='servico') initPitStop();
+}
+
+function cpPitScript(){
+  navigator.clipboard.writeText(_pitScriptTxt).then(function(){
+    mostrarToast('Script copiado! ✓');
+  }).catch(function(){
+    var ta=document.createElement('textarea');ta.value=_pitScriptTxt;
+    document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    mostrarToast('Script copiado! ✓');
+  });
+}
+
+function pitSelecionaUF(uf, btn){
+  _pitUFsel = uf;
+  _pitCidadeSel = '';
+  // Destacar botão UF
+  document.querySelectorAll('.pit-uf-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  // Montar cidades
+  var cidades = [...new Set((GTF.pit_stop||[]).filter(function(r){return r.UF===uf;}).map(function(r){return r.Cidade||'';}).filter(Boolean))].sort();
+  var cont = document.getElementById('pit-cidades-btns');
+  cont.innerHTML = '';
+  cidades.forEach(function(c){
+    var b = document.createElement('button');
+    b.className = 'pit-cidade-btn';
+    b.textContent = c;
+    b.onclick = function(){ pitSelecionaCidade(c, b); };
+    cont.appendChild(b);
+  });
+  document.getElementById('pit-cidades-label').textContent = 'Cidades em ' + uf;
+  document.getElementById('pit-cidades').style.display = '';
+  document.getElementById('pit-info-results').innerHTML = '';
+}
+
+function pitSelecionaCidade(cidade, btn){
+  _pitCidadeSel = cidade;
+  document.querySelectorAll('.pit-cidade-btn').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  // Mostrar resultados
+  var lojas = (GTF.pit_stop||[]).filter(function(r){ return r.UF===_pitUFsel && r.Cidade===cidade; });
+  var h = '<div class="rmeta"><span class="rcnt">'+lojas.length+' unidade'+(lojas.length!==1?'s':'')+' em '+E(cidade)+' - '+E(_pitUFsel)+'</span></div>';
+  lojas.forEach(function(r){
+    h += '<div class="rcard" style="animation:fi .2s ease">';
+    h += '<div class="rgrid">';
+    h += '<div style="grid-column:1/-1"><div class="flbl">Nome</div><div class="fval big" style="color:var(--or)">'+E(r['Nome do fornecedor']||'')+'</div></div>';
+    h += '<div><div class="flbl">Cidade / Bairro</div><div class="fval">'+E(cidade)+(r.Bairro?' — '+E(r.Bairro):'')+'</div></div>';
+    h += '<div><div class="flbl">UF</div><div class="fval"><span class="bplaca">'+E(r.UF)+'</span></div></div>';
+    if(r['Referência']&&r['Referência']!=='Sem referência') h += '<div style="grid-column:1/-1"><div class="flbl">Referência</div><div class="fval">'+E(r['Referência'])+'</div></div>';
+    h += '<div style="grid-column:1/-1"><div class="flbl">Endereço</div><div class="fval">'+E(r['Endereço']||'')+'</div></div>';
+    h += '<div style="grid-column:1/-1"><div class="flbl">Horário de Funcionamento</div><div class="fval">'+E(r['Horário de funcionamento']||'')+'</div></div>';
+    h += '</div></div>';
+  });
+  document.getElementById('pit-info-results').innerHTML = h;
+}
+
+// Arrays globais para evitar problemas de aspas no onclick
+var _pitParteOpts = [];
+var _pitSintomaOpts = [];
+
+function pitParteKw(val){
+  var list = document.getElementById('pit-parte-list');
+  var q = N(val);
+  var partes = [...new Set((GTF.servicos_pit||[]).map(function(r){return r.Parte||'';}))].filter(Boolean).sort();
+  _pitParteOpts = q ? partes.filter(function(p){ return N(p).includes(q); }) : partes;
+  if(!_pitParteOpts.length){ list.classList.remove('open'); return; }
+  list.innerHTML = _pitParteOpts.map(function(p,i){
+    var txt = q ? E(p).replace(new RegExp('('+val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>') : E(p);
+    return '<div class="ac-item" onclick="pitSelecionaParte('+i+')">'+txt+'</div>';
+  }).join('');
+  list.classList.add('open');
+}
+
+function pitSelecionaParte(idx){
+  var parte = _pitParteOpts[idx];
+  if(!parte) return;
+  document.getElementById('pit-parte-inp').value = parte;
+  document.getElementById('pit-parte-list').classList.remove('open');
+  var res = (GTF.servicos_pit||[]).filter(function(r){ return r.Parte===parte; });
+  renderPitServicos(res, null);
+}
+
+function pitSintomaKw(val){
+  var list = document.getElementById('pit-sintoma-list');
+  var q = N(val);
+  var todos = (GTF.servicos_pit||[]);
+  var matches = q ? todos.filter(function(r){ return N(r.Sintoma||'').includes(q); }) : todos;
+  var seen = {};
+  matches = matches.filter(function(r){ if(seen[r.Sintoma]) return false; seen[r.Sintoma]=1; return true; });
+  _pitSintomaOpts = matches;
+  if(!_pitSintomaOpts.length){ list.classList.remove('open'); return; }
+  list.innerHTML = _pitSintomaOpts.map(function(r,i){
+    var txt = q ? E(r.Sintoma).replace(new RegExp('('+val.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+')','gi'),'<mark>$1</mark>') : E(r.Sintoma);
+    return '<div class="ac-item" onclick="pitSelecionaSintoma('+i+')">'+txt+'<span style="color:var(--tx3);font-size:11px;margin-left:6px">— '+E(r.Parte)+'</span></div>';
+  }).join('');
+  list.classList.add('open');
+}
+
+function pitSelecionaSintoma(idx){
+  var item = _pitSintomaOpts[idx];
+  if(!item) return;
+  document.getElementById('pit-sintoma-inp').value = item.Sintoma;
+  document.getElementById('pit-sintoma-list').classList.remove('open');
+  // Limpa o campo Parte — busca é independente
+  document.getElementById('pit-parte-inp').value = '';
+  // Mostra todos os sintomas da parte associada ao sintoma selecionado
+  var res = (GTF.servicos_pit||[]).filter(function(r){ return r.Parte===item.Parte; });
+  renderPitServicos(res, item.Sintoma);
+}
+
+function pitLimpar(){
+  document.getElementById('pit-parte-inp').value = '';
+  document.getElementById('pit-sintoma-inp').value = '';
+  document.getElementById('pit-parte-list').classList.remove('open');
+  document.getElementById('pit-sintoma-list').classList.remove('open');
+  document.getElementById('pit-servico-results').innerHTML = '';
+}
+
+function renderPitServicos(res, highlight){
+  if(!res.length){ noRes('pit-servico-results'); return; }
+  var partes = {};
+  res.forEach(function(r){ if(!partes[r.Parte]) partes[r.Parte]=[]; partes[r.Parte].push(r.Sintoma||''); });
+  var total = res.length;
+  var h = '<div class="rmeta"><span class="rcnt">'+total+' serviço'+(total!==1?'s':'')+(highlight?' relacionados a: <strong style="color:var(--or)">'+E(highlight)+'</strong>':'')+'</span></div>';
+  Object.keys(partes).forEach(function(parte){
+    h += '<div class="rcard" style="animation:fi .2s ease">';
+    h += '<div class="grp-lbl" style="font-size:13px;margin-bottom:10px">'+E(parte)+'</div>';
+    partes[parte].forEach(function(s,i){
+      var isHL = highlight && N(s)===N(highlight);
+      h += '<div style="display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--bdr2)' + (isHL ? ';background:rgba(255,102,0,.1);margin:0 -6px;padding:9px 6px;border-radius:7px' : '') + '">';
+      h += '<span style="min-width:22px;font-size:12px;font-weight:700;color:var(--or);margin-top:1px">'+(i+1)+'.</span>';
+      h += '<span style="font-size:14px;color:'+(isHL?'var(--orl)':'var(--tx)')+';font-weight:'+(isHL?'700':'400')+'">'+E(s)+'</span>';
+      if(isHL) h += '<span style="margin-left:auto;font-size:11px;background:var(--or);color:#fff;border-radius:5px;padding:2px 8px;font-weight:700;flex-shrink:0">selecionado</span>';
+      h += '</div>';
+    });
+    h += '</div>';
+  });
+  document.getElementById('pit-servico-results').innerHTML = h;
+}
+
+// ── LOCALIZAÇÃO REBOQUE (Supabase) ─────────────────────────────────────────
+var SUPA_URL = 'https://gvkwjngwbkivmwehxcar.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2a3dqbmd3Ymtpdm13ZWh4Y2FyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMDM2ODAsImV4cCI6MjA4OTY3OTY4MH0.2yevmJ8CHYETabeq68cRp1jiPvOh4CCgeYSAfhOUbP0';
+var _locAutoInterval = null;
+
+function locCopiarLink(){
+  var link = 'https://sacgtf.github.io/atendimentofrotas/localizacao.html';
+  navigator.clipboard.writeText(link).then(function(){
+    event.target.textContent = '✅ Copiado!';
+    setTimeout(function(){ event.target.textContent = '📋 Copiar link'; }, 2000);
+  }).catch(function(){ prompt('Copie o link:', link); });
+}
+
+async function locAtualizar(){
+  var status = document.getElementById('loc-status');
+  var count  = document.getElementById('loc-count');
+  var lista  = document.getElementById('loc-lista');
+  status.textContent = 'Atualizando...';
+
+  try {
+    // Busca localizações das últimas 2 horas
+    var desde = Date.now() - 7200000;
+    var resp = await fetch(SUPA_URL+'/rest/v1/localizacoes?ts=gte.'+desde+'&order=ts.desc', {
+      headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY }
+    });
+    var locs = await resp.json();
+    count.textContent = locs.length;
+    status.textContent = 'Atualizado às '+new Date().toLocaleTimeString('pt-BR');
+
+    if(!locs.length){
+      lista.innerHTML = '<div class="ecrd"><div class="eico">📍</div><div class="etitle">Aguardando localizações</div><div class="esub">Quando o cliente acessar o link e compartilhar, aparece aqui automaticamente</div></div>';
+      return;
+    }
+
+    var h = '';
+    locs.forEach(function(loc){
+      var hora = new Date(loc.ts).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+      var gmaps    = 'https://www.google.com/maps?q='+loc.lat+','+loc.lng;
+      var gmapsNav = 'https://www.google.com/maps/dir/?api=1&destination='+loc.lat+','+loc.lng;
+      var isNovo   = (Date.now() - loc.ts) < 60000;
+      h += '<div class="rcard" style="border-left-color:#22d3ee;'+(isNovo?'background:rgba(34,211,238,.06)':'')+';">';
+      h += '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">';
+      h += '<div>';
+      if(isNovo) h += '<span style="background:#22d3ee;color:#1e2535;border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;margin-bottom:8px;display:inline-block">🔴 NOVO</span><br>';
+      h += '<div class="flbl">Recebido às</div><div class="fval big" style="color:#22d3ee;font-family:monospace">'+hora+'</div>';
+      if(loc.endereco){ h += '<div class="flbl" style="margin-top:8px">Endereço aproximado</div><div class="fval">'+E(loc.endereco)+'</div>'; }
+      h += '<div class="flbl" style="margin-top:8px">Coordenadas</div>';
+      h += '<div class="fval" style="font-size:13px;font-family:monospace;color:var(--tx2)">'+loc.lat.toFixed(6)+', '+loc.lng.toFixed(6)+'</div>';
+      if(loc.precisao) h += '<div class="flbl" style="margin-top:4px">Precisão</div><div class="fval" style="font-size:13px;color:var(--tx3)">±'+Math.round(loc.precisao)+' metros</div>';
+      h += '</div>';
+      h += '<div style="display:flex;flex-direction:column;gap:8px;flex-shrink:0">';
+      h += '<a href="'+gmaps+'" target="_blank" style="background:#22d3ee;color:#1e2535;border:none;border-radius:8px;padding:10px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block;white-space:nowrap">🗺️ Ver no Maps</a>';
+      h += '<a href="'+gmapsNav+'" target="_blank" style="background:transparent;color:#22d3ee;border:1.5px solid rgba(34,211,238,.4);border-radius:8px;padding:9px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;display:inline-block;white-space:nowrap">🧭 Navegar até lá</a>';
+      h += '<button onclick="locCopiarCoords(\''+loc.lat+','+loc.lng+'\')" style="background:transparent;border:1px solid var(--bdr);color:var(--tx2);border-radius:8px;padding:8px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap">📋 Copiar coords</button>';
+      h += '</div></div></div>';
+    });
+    lista.innerHTML = h;
+  } catch(e){
+    status.textContent = '⚠️ Erro ao buscar localizações';
+  }
+}
+
+function locCopiarCoords(coords){
+  navigator.clipboard.writeText(coords).catch(function(){ prompt('Copie:', coords); });
+}
+
+async function locLimpar(){
+  if(!confirm('Limpar todas as localizações recebidas?')) return;
+  var desde = Date.now() - 7200000;
+  await fetch(SUPA_URL+'/rest/v1/localizacoes?ts=gte.'+desde, {
+    method:'DELETE',
+    headers:{ 'apikey': SUPA_KEY, 'Authorization': 'Bearer '+SUPA_KEY }
+  });
+  locAtualizar();
+}
+
+function locToggleAuto(on){
+  if(on){ _locAutoInterval = setInterval(locAtualizar, 10000); }
+  else  { clearInterval(_locAutoInterval); _locAutoInterval = null; }
+}
+
+// Atualizar ao entrar na página
+var _origShowPage = showPage;
+showPage = function(id){
+  _origShowPage(id);
+  if(id==='localizacao') locAtualizar();
+};
+
+
+document.addEventListener('click',function(e){
+  if(!e.target.closest('#pit-parte-inp')&&!e.target.closest('#pit-parte-list'))
+    document.getElementById('pit-parte-list').classList.remove('open');
+  if(!e.target.closest('#pit-sintoma-inp')&&!e.target.closest('#pit-sintoma-list'))
+    document.getElementById('pit-sintoma-list').classList.remove('open');
+});
+
+
+// ── POOL DE RESERVA ────────────────────────────────────────────────────────
+function abrirPool(){
+  var dados = (GTF.link_pool||[]);
+  // Busca a linha com "Planilha de pool de reserva" na coluna A
+  var row = dados.find(function(r){
+    var nome = r['Nome do arquivo']||r['nome do arquivo']||Object.values(r)[0]||'';
+    return nome.toLowerCase().includes('pool');
+  });
+  var link = row ? (row['Link']||row['link']||Object.values(row)[1]||'') : '';
+  if(!link){
+    alert('Link não encontrado. Verifique se a aba "Link Pool" está atualizada na planilha.');
+    return;
+  }
+  window.open(link, '_blank');
+}
+
+// ── RESERVA EM ANDAMENTO ───────────────────────────────────────────────────
+function searchReserva(){
+  var placa = document.getElementById('ra-placa').value.trim();
+  if(!placa) return;
+  var dados = GTF.reserva_and||[];
+  var res = dados.filter(function(r){
+    var pe = r['Placa Efetivo']||r['Placa efetivo']||r['placa efetivo']||r['PLACA EFETIVO']||'';
+    return pe.trim().toUpperCase() === placa.toUpperCase();
+  });
+  document.getElementById('ra-liberado').style.display  = 'none';
+  document.getElementById('ra-bloqueado').style.display = 'none';
+
+  if(!res.length){
+    document.getElementById('ra-liberado').style.display = '';
+    return;
+  }
+  // Bloqueado — montar cards
+  var h = '';
+  res.forEach(function(r){
+    var nrv  = r['Nº Reserva']  ||r['N Reserva']  ||r['nº reserva']  ||'';
+    var nro  = r['Nº Ocorrência']||r['N Ocorrência']||r['nº ocorrência']||'';
+    var mot  = r['Motorista']   ||r['motorista']   ||'';
+    var plef = r['Placa Efetivo']||r['placa efetivo']||'';
+    var plsb = r['Placado Sublocado']||r['Placa Sublocado']||r['placa sublocado']||Object.values(r)[4]||'';
+    var dtret= r['Dt Retirada'] ||r['dt retirada'] ||'';
+    var dtdev= r['Dt Devolução']||r['dt devolução']||'';
+    h+='<div class="rcard" style="border-left-color:#f87171;border-left-width:3px">';
+    h+='<div class="rgrid">';
+    h+='<div><div class="flbl">Nº Reserva</div><div class="fval big" style="color:var(--orl);font-family:monospace">'+E(nrv)+'</div></div>';
+    h+='<div><div class="flbl">Nº Ocorrência</div><div class="fval">'+E(nro)+'</div></div>';
+    h+='<div style="grid-column:1/-1"><div class="flbl">Motorista</div><div class="fval big">'+E(mot)+'</div></div>';
+    h+='<div><div class="flbl">Placa Efetivo</div><div class="fval"><span class="bplaca">'+E(plef)+'</span></div></div>';
+    h+='<div><div class="flbl">Placa Sublocado</div><div class="fval"><span class="bplaca">'+E(plsb)+'</span></div></div>';
+    h+='<div><div class="flbl">Dt Retirada</div><div class="fval">'+E(dtret)+'</div></div>';
+    h+='<div><div class="flbl">Dt Devolução</div><div class="fval">'+E(dtdev)+'</div></div>';
+    h+='</div></div>';
+  });
+  document.getElementById('ra-results').innerHTML = h;
+  document.getElementById('ra-bloqueado').style.display = '';
+}
+function limparReserva(){
+  document.getElementById('ra-placa').value = '';
+  document.getElementById('ra-liberado').style.display  = 'none';
+  document.getElementById('ra-bloqueado').style.display = 'none';
+  document.getElementById('ra-results').innerHTML = '';
+}
+</script>
+</body>
+</html>
