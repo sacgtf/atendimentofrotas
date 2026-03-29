@@ -251,6 +251,40 @@ function removerFoto(idx){
   renderPreview();
 }
 
+async function tentarUpload(nome, file, contentType, tentativa){
+  tentativa = tentativa || 1;
+  try{
+    var r = await fetch(SUPA_URL+'/storage/v1/object/fotos-condutor/'+nome,{
+      method:'POST',
+      headers:{
+        'apikey': SUPA_KEY,
+        'Authorization': 'Bearer '+SUPA_KEY,
+        'Content-Type': contentType,
+        'x-upsert': 'true'
+      },
+      body: file
+    });
+    if(r.ok||r.status===200||r.status===201){
+      return true;
+    } else {
+      var errBody = await r.text();
+      console.error('Erro upload (tentativa '+tentativa+'):', r.status, errBody);
+      if(tentativa < 3){
+        await new Promise(function(res){ setTimeout(res, 2000); });
+        return tentarUpload(nome, file, contentType, tentativa+1);
+      }
+      return false;
+    }
+  } catch(e){
+    console.error('Exceção upload (tentativa '+tentativa+'):', e);
+    if(tentativa < 3){
+      await new Promise(function(res){ setTimeout(res, 2000); });
+      return tentarUpload(nome, file, contentType, tentativa+1);
+    }
+    return false;
+  }
+}
+
 async function enviarFotos(){
   if(!_fotosFiles.length) return;
   var btnEnv  = document.getElementById('btn-enviar-fotos');
@@ -273,7 +307,6 @@ async function enviarFotos(){
     var nome = 'foto_'+Date.now()+'_'+Math.random().toString(36).substr(2,6)+'.'+ext;
     progT.textContent = 'Enviando foto '+(i+1)+' de '+total+'...';
 
-    // Garante Content-Type correto independente do celular
     var contentType = file.type;
     if(!contentType || contentType === '') {
       if(ext==='jpg'||ext==='jpeg') contentType = 'image/jpeg';
@@ -284,28 +317,8 @@ async function enviarFotos(){
       else contentType = 'image/jpeg';
     }
 
-    try{
-      var r = await fetch(SUPA_URL+'/storage/v1/object/fotos-condutor/'+nome,{
-        method:'POST',
-        headers:{
-          'apikey': SUPA_KEY,
-          'Authorization': 'Bearer '+SUPA_KEY,
-          'Content-Type': contentType,
-          'x-upsert': 'true'
-        },
-        body: file
-      });
-      if(r.ok||r.status===200||r.status===201){
-        enviados++;
-      } else {
-        var errBody = await r.text();
-        console.error('Erro upload foto:', r.status, errBody);
-        erros++;
-      }
-    } catch(e){
-      console.error('Exceção upload foto:', e);
-      erros++;
-    }
+    var sucesso = await tentarUpload(nome, file, contentType);
+    if(sucesso){ enviados++; } else { erros++; }
 
     progF.style.width = Math.round(((i+1)/total)*100)+'%';
   }
@@ -322,7 +335,7 @@ async function enviarFotos(){
     document.getElementById('fotos-ok-msg').textContent = enviados+' foto'+( enviados>1?'s':'')+' enviada'+(enviados>1?'s':'')+'. '+erros+' falhou.';
     ok.style.display='block';
   } else {
-    document.getElementById('fotos-err-msg').textContent='Erro ao enviar as fotos. Verifique sua conexão.';
+    document.getElementById('fotos-err-msg').innerHTML='Erro ao enviar. <span onclick="enviarFotos()" style="text-decoration:underline;cursor:pointer;font-weight:700">Tentar novamente</span>';
     er.style.display='block';
   }
 }
